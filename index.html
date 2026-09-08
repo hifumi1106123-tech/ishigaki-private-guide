@@ -1,0 +1,1673 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>ISHIGAKI PRIVATE ｜ Travel Your Way.</title>
+<meta name="description" content="石垣島、1日1組限定の完全プライベートガイド／アテンドサービス。あなただけの石垣島を、一緒につくる。">
+
+<!--
+  ============================================================
+  カスタマイズガイド
+  ============================================================
+  1) ブランド名・コピー
+     → 下の <script> 内、先頭の BRAND オブジェクトを編集してください。
+
+  2) 12枚のカード内容（英単語・日本語・説明文・タップ後の詳細）
+     → 下の <script> 内、CARDS 配列の各オブジェクトを編集してください。
+       (グリッドのタイルとモーダルの中身は、両方ここから自動生成されます)
+       posts の投稿数は CARDS.length から自動で表示されるため、
+       カードを増減してもプロフィール欄の数字は自動で合います。
+
+     現在の構成（2026-09 改訂：12項目→6つの案内記事＋写真投稿6つに整理）：
+       01 PRIVATE      … あなたに合わせた旅（旧 PRIVATE + SUPPORT を統合）
+       02 YOUR DAY     … こんな島時間を過ごせます（旧 YOUR DAY + LOCAL + EXPERIENCE を統合）
+       03 ABOUT        … 私が案内する石垣島（旧 ABOUT + ISHIGAKI の想いを統合）
+       04 PRICE & FLOW … 料金とご利用の流れ（旧 PRICE + FLOW を統合）
+       05 FAQ          … よくある質問・ご予約について（旧 FAQ + POLICY を統合）
+       06 CONTACT      … まずはご相談ください
+       07〜12          … 写真投稿（旧 03/07/08/09/10/12 の表紙写真を再配置）
+
+     カードの中身（modalType）：
+       未指定       … 通常の本文（modalText、\n\n で段落分け）
+                      modalBox: { title, text, note } で本文の下に独立した案内枠を追加可（01 で使用）
+                      modalFootnote: { label, body } で「label →」の補足リンクを追加可（03 で使用）
+       "scenarios"  … 短いシナリオ一覧（modalIntro + modalScenarios[{title,text}]。02 で使用）
+       "priceFlow"  … 料金（"pricing" と同じ構成）＋ 簡略化した利用の流れ
+                      （modalFlowSteps[{num,title,text}] / modalFlowHeading。04 で使用）
+       "faq"        … Q&A アコーディオン（modalFaq 配列。05 で使用）
+       "gallery"    … 複数写真のギャラリー＋短いキャプションのみ（modalGallery[{src,fallback}] /
+                      modalCaption。07〜12 の写真投稿で使用。サービス説明は表示しません）
+       "steps" / "pricing" / "policy" … 旧テンプレート（現在は未使用ですが再利用できます）
+
+     グリッドの英字タイトルが1行に収まらない場合は、そのカードに
+     `wordWrap: true` を追加すると2行までの折り返しを許可します（04 で使用）。
+
+  3) 写真の差し替え
+     images/ フォルダに以下のファイル名で画像を置くと、
+     自動的に切り替わります（コードの変更は不要です）。
+     ファイルが無い間は仮写真（実在の石垣島の写真）が表示されます。
+
+     images/avatar.jpg            … プロフィールアイコン（丸型）
+     images/hero-bg.jpg           … 背景（プロフィール上部）
+
+     [01〜06｜案内記事、写真は既存ファイルを再利用しています]
+     images/card-private.jpg + -modal.jpg      … 01 PRIVATE
+     images/card-experience.jpg + -modal.jpg   … 02 YOUR DAY
+     images/card-about.jpg + -modal.jpg        … 03 ABOUT（案内人）
+     images/card-local.jpg + -modal.jpg        … 04 PRICE & FLOW
+     images/card-support-1.jpg / -modal.jpg    … 05 FAQ
+     images/card-ishigaki.jpg + -modal.jpg     … 06 CONTACT
+
+     [07〜12｜写真投稿。各カードの modalGallery 配列に画像を追加すると
+      ギャラリーの枚数を増やせます。現状は1枚の写真を2種類の
+      トリミングで見せています（本文末尾の作業報告もご参照ください）]
+     images/card-yourday.jpg + -modal.jpg      … 07 SMILE
+     images/card-flow.jpg + -modal.jpg         … 08 ISLAND TREATS
+     images/card-price.jpg + -modal.jpg        … 09 COUNTRYSIDE
+     images/card-faq.jpg + -modal.jpg          … 10 PADDLE READY
+     images/card-policy.jpg + -modal.jpg       … 11 CRUISING
+     images/card-contact.jpg + -modal.jpg      … 12 ARRIVAL
+
+  4) 詳細ページへのリンク
+     CARDS 配列の各オブジェクトに `link: "URL"` を追加すると、
+     モーダル内に「くわしく見る」リンクが自動的に表示されます。
+  ============================================================
+-->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,900&family=Inter:wght@400;500;600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+
+<style>
+/* ==========================================================
+   RESET & BASE
+========================================================== */
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+:root {
+  --c-bg: #EBE7DA;
+  --c-card: #E2DCC9;
+  --c-ink: #2A2C2B;
+  --c-ink-soft: rgba(42,44,43,0.64);
+  --c-ink-faint: rgba(42,44,43,0.16);
+  --c-white: #FDFCF8;
+  --c-dusty: #6F8B9C;
+  --c-dusty-deep: #4F6C7C;
+  --c-sage: #8A9880;
+  --c-sand: #C9B896;
+
+  --f-display: 'Fraunces', 'Times New Roman', serif;
+  --f-ui: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --f-jp: 'Zen Kaku Gothic New', sans-serif;
+
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --edge: clamp(0.9rem, 4vw, 1.6rem);
+  --gap: clamp(1px, 0.35vw, 3px);
+  --radius: clamp(4px, 1vw, 10px);
+}
+
+body {
+  margin: 0;
+  background: var(--c-bg);
+  color: var(--c-ink);
+  font-family: var(--f-jp);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  min-height: 100svh;
+}
+img { max-width: 100%; display: block; }
+button { font-family: inherit; }
+a { color: inherit; }
+
+/* fixed film-toned background photo, visible in the margins around the centered column */
+.bg-photo {
+  position: fixed; inset: 0; z-index: -2;
+  overflow: hidden;
+}
+.bg-photo img {
+  width: 100%; height: 100%; object-fit: cover;
+  filter: saturate(0.62) sepia(0.12) contrast(1.03) brightness(0.9);
+  transform: scale(1.02);
+}
+.bg-photo::after {
+  content: "";
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(18,24,28,0.48) 0%, rgba(26,30,26,0.62) 55%, var(--c-bg) 92%);
+}
+/* subtle film grain, page-wide */
+.grain {
+  position: fixed; inset: 0; z-index: -1;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.page {
+  position: relative;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: clamp(1.6rem, 6vw, 3rem) var(--edge) clamp(3rem, 8vw, 5rem);
+}
+
+/* ==========================================================
+   PROFILE HEADER
+========================================================== */
+.profile-top {
+  display: flex;
+  align-items: center;
+  gap: clamp(1rem, 4vw, 1.8rem);
+  margin-bottom: clamp(0.65rem, 2.2vw, 0.9rem);
+}
+.avatar {
+  flex: none;
+  width: clamp(64px, 16vw, 92px);
+  height: clamp(64px, 16vw, 92px);
+  border-radius: 50%;
+  background: var(--c-white);
+  border: 1px solid rgba(255,255,255,0.7);
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: clamp(1.3rem, 5vw, 1.9rem);
+  color: var(--c-dusty-deep);
+  box-shadow: 0 6px 18px rgba(20,25,30,0.18);
+}
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 42%;
+  display: block;
+}
+.profile-stats {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  justify-content: flex-start;
+  gap: clamp(0.9rem, 6vw, 2.8rem);
+}
+.stat { text-align: center; color: var(--c-white); min-width: 0; }
+.stat b {
+  display: block;
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: clamp(1.15rem, 5.6vw, 1.9rem);
+  line-height: 1.1;
+  white-space: nowrap;
+}
+.stat span {
+  display: block;
+  font-family: var(--f-ui);
+  font-weight: 500;
+  font-size: clamp(0.66rem, 2.6vw, 0.76rem);
+  letter-spacing: 0.02em;
+  color: rgba(253,252,248,0.98);
+  margin-top: 0.28rem;
+}
+
+.profile-bio {
+  color: var(--c-white);
+  margin-bottom: clamp(0.6rem, 2vw, 0.85rem);
+  text-shadow: 0 1px 3px rgba(0,0,0,0.45), 0 2px 14px rgba(0,0,0,0.26);
+}
+.profile-name {
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: clamp(1.15rem, 4.6vw, 1.5rem);
+  margin: 0 0 0.1em;
+}
+.profile-name em {
+  font-style: normal;
+  font-weight: 500;
+  opacity: 0.92;
+}
+.profile-category {
+  font-family: var(--f-ui);
+  font-weight: 500;
+  font-size: clamp(0.75rem, 3vw, 0.85rem);
+  color: #FFFFFF;
+  margin-bottom: 0.4em;
+}
+.profile-bio-line {
+  font-weight: 600;
+  font-size: clamp(0.85rem, 3.4vw, 0.96rem);
+  line-height: 1.42;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5em;
+  color: #FFFFFF;
+}
+.profile-bio-line + .profile-bio-line { margin-top: 0.16em; }
+.profile-bio-line--lead {
+  font-weight: 800;
+  font-size: clamp(1.12rem, 5vw, 1.34rem);
+  letter-spacing: 0.005em;
+  margin-bottom: 0.28em;
+}
+.bio-indent { display: block; margin-top: 0.1em; }
+.profile-bio-emphasis {
+  font-weight: 700;
+  font-size: clamp(0.98rem, 4vw, 1.14rem);
+  line-height: 1.5;
+  color: #FFFFFF;
+  margin: 0 0 0.6em;
+}
+.profile-bio-body {
+  font-weight: 500;
+  font-size: clamp(0.83rem, 3.2vw, 0.92rem);
+  line-height: 1.65;
+  color: #FFFFFF;
+  margin: 0 0 0.7em;
+}
+.profile-bio-body + .profile-bio-line { margin-top: 0; }
+.profile-bio-line--link {
+  text-decoration: none;
+  cursor: pointer;
+  transition: opacity 0.25s var(--ease);
+}
+.profile-bio-line--link:hover { opacity: 0.82; }
+.profile-tagline {
+  font-family: var(--f-jp);
+  font-weight: 500;
+  font-size: clamp(0.74rem, 2.8vw, 0.82rem);
+  line-height: 1.55;
+  color: #FFFFFF;
+  margin: clamp(0.5rem, 1.8vw, 0.7rem) 0 0;
+}
+
+.profile-actions {
+  display: flex;
+  gap: clamp(0.35rem, 1.6vw, 0.5rem);
+  margin-bottom: clamp(0.7rem, 2.6vw, 1rem);
+}
+.pbtn {
+  flex: 1;
+  text-align: center;
+  text-decoration: none;
+  padding: 0.58em 0.4em;
+  border-radius: 8px;
+  font-family: var(--f-ui);
+  font-weight: 600;
+  font-size: clamp(0.7rem, 2.6vw, 0.83rem);
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  border: 1px solid rgba(253,252,248,0.55);
+  background: rgba(253,252,248,0.14);
+  color: var(--c-white);
+  backdrop-filter: blur(6px);
+  transition: background 0.35s var(--ease), transform 0.35s var(--ease);
+}
+.pbtn--primary { background: var(--c-white); color: var(--c-ink); border-color: var(--c-white); }
+.pbtn:hover { transform: translateY(-1px); }
+.pbtn--primary:hover { background: #fff; }
+.pbtn:not(.pbtn--primary):hover { background: rgba(253,252,248,0.24); }
+.pbtn-more {
+  flex: none;
+  width: clamp(2.1rem, 8vw, 2.5rem);
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 8px;
+  cursor: pointer;
+  border: 1px solid rgba(253,252,248,0.55);
+  background: rgba(253,252,248,0.14);
+  color: var(--c-white);
+  backdrop-filter: blur(6px);
+  transition: background 0.35s var(--ease), transform 0.35s var(--ease);
+}
+.pbtn-more:hover { background: rgba(253,252,248,0.24); transform: translateY(-1px); }
+.pbtn-more svg { width: 15px; height: 15px; }
+
+/* ==========================================================
+   PROFILE TABS（Instagramのグリッド／リール／タグ付けタブ相当）
+========================================================== */
+.profile-tabs {
+  display: flex;
+  border-top: 1px solid rgba(253,252,248,0.32);
+  margin-bottom: clamp(0.6rem, 2.5vw, 0.9rem);
+}
+.ptab {
+  flex: 1;
+  display: flex; align-items: center; justify-content: center;
+  padding: 0.7em 0;
+  background: none;
+  border: none;
+  border-top: 1.5px solid transparent;
+  margin-top: -1px;
+  cursor: pointer;
+  color: rgba(253,252,248,0.55);
+  transition: color 0.3s var(--ease), border-color 0.3s var(--ease);
+}
+.ptab svg { width: clamp(18px, 5vw, 22px); height: clamp(18px, 5vw, 22px); }
+.ptab.is-active { color: var(--c-white); border-top-color: var(--c-white); }
+.ptab:not(.is-active):hover { color: rgba(253,252,248,0.8); }
+
+.tab-placeholder {
+  text-align: center;
+  padding: clamp(2.5rem, 10vw, 4rem) 1rem;
+  color: var(--c-ink-soft);
+  font-size: 0.88rem;
+  line-height: 1.8;
+}
+
+/* ==========================================================
+   3×3 GRID
+========================================================== */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--gap);
+}
+.tile {
+  container-type: inline-size;
+  position: relative;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  border-radius: var(--radius);
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  background: var(--c-card);
+  text-align: left;
+  color: inherit;
+  box-shadow: 0 2px 10px rgba(20,22,20,0.10);
+}
+.tile:focus-visible { outline: 2px solid var(--c-dusty-deep); outline-offset: 2px; }
+
+.tile-photo, .tile-photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.tile-photo img { transition: transform 1.4s var(--ease); }
+@media (hover: hover) { .tile:hover .tile-photo img { transform: scale(1.06); } }
+
+.tile-scrim {
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(20,24,26,0.02) 40%, rgba(20,24,26,0.62) 100%);
+}
+.tile[data-tone="dusty"] .tile-scrim { background: linear-gradient(180deg, rgba(30,45,55,0.05) 35%, rgba(24,38,48,0.68) 100%); }
+.tile[data-tone="sage"] .tile-scrim { background: linear-gradient(180deg, rgba(30,38,26,0.05) 35%, rgba(28,36,24,0.66) 100%); }
+.tile[data-tone="sand"] .tile-scrim { background: linear-gradient(180deg, rgba(45,36,20,0.05) 35%, rgba(38,30,18,0.66) 100%); }
+
+.tile-content {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  padding: 9cqw 8cqw 8cqw;
+  color: var(--c-white);
+  display: flex; flex-direction: column; gap: 0.15em;
+}
+.tile-num {
+  font-family: var(--f-ui);
+  font-size: clamp(0.55rem, 6cqw, 0.72rem);
+  letter-spacing: 0.08em;
+  opacity: 0.8;
+}
+.tile-word {
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: clamp(0.6rem, 10cqw, 1.9rem);
+  line-height: 0.98;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: clip;
+  max-width: 100%;
+}
+.tile-word--dark { color: var(--c-ink); }
+/* 「PRICE & FLOW」など、1行に収まりきらない英字だけ2行までの折り返しを許可 */
+.tile-word--wrap {
+  white-space: normal;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  font-size: clamp(0.56rem, 8cqw, 1.5rem);
+  line-height: 1.05;
+}
+.tile-jp {
+  font-family: var(--f-jp);
+  font-size: clamp(0.58rem, 6.5cqw, 0.75rem);
+  opacity: 0.88;
+  margin-top: 0.15em;
+}
+
+.tile-search {
+  position: absolute; top: 7cqw; left: 7cqw; right: 7cqw;
+  display: flex; align-items: center; gap: 0.4em;
+  background: rgba(253,252,248,0.92);
+  color: var(--c-ink-soft);
+  font-family: var(--f-ui);
+  font-size: clamp(0.5rem, 5.6cqw, 0.66rem);
+  padding: 0.5em 0.7em;
+  border-radius: 999px;
+  box-shadow: 0 2px 6px rgba(20,22,20,0.15);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* collage template */
+.tile-collage { position: absolute; inset: 0; }
+.collage-main { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.collage-sub {
+  position: absolute; width: 46%; aspect-ratio: 4/5; object-fit: cover;
+  right: 8%; bottom: 30%;
+  border: 3px solid var(--c-white);
+  border-radius: 4px;
+  box-shadow: 0 6px 14px rgba(20,22,20,0.28);
+  transform: rotate(6deg);
+}
+
+/* cream template */
+.tile-cream {
+  position: absolute; inset: 0;
+  background: var(--c-card);
+  padding: 8cqw;
+  display: flex; flex-direction: column;
+}
+.tile-cream .tile-num { color: var(--c-dusty-deep); opacity: 1; }
+.tile-cream .tile-word { color: var(--c-ink); margin-top: auto; }
+.tile-cream .tile-jp { color: var(--c-ink-soft); }
+.tile-cream .tile-arrow {
+  align-self: flex-end;
+  margin-top: auto;
+  font-family: var(--f-display);
+  font-size: clamp(1rem, 12cqw, 1.6rem);
+  color: var(--c-dusty-deep);
+}
+.cream-portrait {
+  position: absolute; top: 8cqw; right: 8cqw;
+  width: 38cqw; aspect-ratio: 1/1; border-radius: 50%; overflow: hidden;
+  border: 2px solid var(--c-white); box-shadow: 0 4px 10px rgba(20,22,20,0.18);
+}
+.cream-portrait img { width: 100%; height: 100%; object-fit: cover; }
+
+/* ticket template（写真を使わない情報系カード：チケット／スタンプ風） */
+.tile-ticket {
+  position: absolute; inset: 0;
+  background: var(--c-card);
+  padding: 8cqw;
+  display: flex; flex-direction: column;
+  overflow: hidden;
+}
+.tile[data-tone="dusty"] .tile-ticket { background: #DEE5E4; }
+.tile[data-tone="sage"] .tile-ticket { background: #E3E6D9; }
+.tile[data-tone="sand"] .tile-ticket { background: #EFE5D1; }
+.tile-ticket-bg-num {
+  position: absolute; top: -8cqw; right: -4cqw;
+  font-family: var(--f-display); font-weight: 900;
+  font-size: 52cqw; line-height: 1;
+  color: var(--c-ink);
+  opacity: 0.08;
+  pointer-events: none;
+}
+.tile-ticket .tile-num { color: var(--c-dusty-deep); opacity: 1; position: relative; }
+.tile-ticket .tile-word { color: var(--c-ink); margin-top: auto; position: relative; }
+.tile-ticket .tile-jp { color: var(--c-ink-soft); position: relative; }
+
+/* ==========================================================
+   FOOTER
+========================================================== */
+.page-footer {
+  margin-top: clamp(2rem, 6vw, 3rem);
+  text-align: center;
+}
+.page-footer-mark {
+  font-family: var(--f-display);
+  font-weight: 600;
+  font-size: 0.92rem;
+  color: var(--c-ink);
+}
+.page-footer-meta {
+  font-family: var(--f-ui);
+  font-size: 0.7rem;
+  color: var(--c-ink-soft);
+  margin-top: 0.4rem;
+}
+
+/* ==========================================================
+   MODAL
+========================================================== */
+body.modal-open { overflow: hidden; }
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 300;
+  display: flex; align-items: flex-end; justify-content: center;
+  background: rgba(20,22,20,0.5);
+  opacity: 0; visibility: hidden;
+  transition: opacity 0.4s var(--ease), visibility 0s linear 0.4s;
+}
+.modal-overlay.is-open { opacity: 1; visibility: visible; transition: opacity 0.4s var(--ease), visibility 0s linear 0s; }
+.modal-panel {
+  position: relative;
+  background: var(--c-bg);
+  width: 100%;
+  max-width: 520px;
+  max-height: 86svh;
+  overflow-y: auto;
+  border-radius: 20px 20px 0 0;
+  transform: translateY(24px);
+  opacity: 0;
+  transition: transform 0.45s var(--ease), opacity 0.45s var(--ease);
+}
+.modal-overlay.is-open .modal-panel { transform: translateY(0); opacity: 1; }
+@media (min-width: 620px) {
+  .modal-overlay { align-items: center; }
+  .modal-panel { border-radius: 16px; transform: translateY(16px) scale(0.98); }
+}
+.modal-media { aspect-ratio: 16/10; overflow: hidden; background: var(--c-card); }
+.modal-media img { width: 100%; height: 100%; object-fit: cover; }
+/* 閉じるボタンは modal-panel 内をスクロールしても常に同じ位置に留まるよう、
+   高さ0のstickyラッパーの中に絶対配置しています（スクロール量に関わらず追従します） */
+.modal-close-wrap {
+  position: sticky;
+  top: 0;
+  height: 0;
+  z-index: 3;
+}
+.modal-close {
+  position: absolute; top: 0.9rem; right: 0.9rem; z-index: 3;
+  width: 36px; height: 36px; border-radius: 50%; border: none;
+  background: rgba(253,252,248,0.92); color: var(--c-ink);
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  font-size: 0.95rem;
+  box-shadow: 0 2px 8px rgba(20,22,20,0.18);
+}
+.modal-back {
+  position: absolute; top: 0.9rem; left: 0.9rem; z-index: 3;
+  display: flex; align-items: center; gap: 0.35em;
+  height: 36px; padding: 0 0.9em 0 0.7em;
+  border-radius: 999px; border: none;
+  background: rgba(253,252,248,0.92); color: var(--c-ink);
+  cursor: pointer;
+  font-family: var(--f-ui); font-weight: 600; font-size: 0.8rem;
+  box-shadow: 0 2px 8px rgba(20,22,20,0.18);
+}
+.modal-body { padding: clamp(1.3rem, 5vw, 2rem); }
+.modal-num { font-family: var(--f-ui); font-size: 0.72rem; letter-spacing: 0.08em; color: var(--c-dusty-deep); margin-bottom: 0.4rem; }
+.modal-heading { font-family: var(--f-display); font-weight: 700; font-size: clamp(1.4rem, 5vw, 2rem); margin: 0 0 0.7rem; }
+.modal-name { font-family: var(--f-display); font-weight: 600; font-size: 1.05rem; color: var(--c-dusty-deep); margin: -0.3rem 0 0.9rem; }
+.modal-text { font-size: 0.94rem; line-height: 1.9; color: var(--c-ink-soft); white-space: pre-line; }
+.modal-cta {
+  display: inline-flex; align-items: center; gap: 0.7em;
+  margin-top: 1.4rem;
+  padding: 0.85em 1.6em;
+  border-radius: 999px;
+  border: 1px solid var(--c-ink);
+  font-family: var(--f-ui); font-weight: 600; font-size: 0.85rem;
+  background: transparent; color: var(--c-ink);
+  transition: background 0.35s var(--ease), color 0.35s var(--ease);
+}
+.modal-cta:hover { background: var(--c-ink); color: var(--c-bg); }
+
+/* ---- modal rich content: subhead / list / subcopy ---- */
+.modal-subhead {
+  font-family: var(--f-ui);
+  font-weight: 700;
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  color: var(--c-ink);
+  margin: 1.6rem 0 0.7rem;
+}
+.modal-subcopy {
+  font-family: var(--f-jp);
+  font-size: 0.88rem;
+  color: var(--c-ink-soft);
+  margin: -0.2rem 0 1.2rem;
+}
+.modal-list { margin: 0; padding: 0; list-style: none; }
+.modal-list li {
+  position: relative;
+  padding-left: 1.2em;
+  font-size: 0.88rem;
+  line-height: 1.7;
+  color: var(--c-ink-soft);
+}
+.modal-list li::before {
+  content: "・";
+  position: absolute; left: 0;
+  color: var(--c-dusty-deep);
+}
+
+/* ---- FLOW（ご利用の流れ） ---- */
+.flow-list { margin-top: 0.4rem; }
+.flow-step {
+  padding: 1.1rem 0;
+  border-top: 1px solid var(--c-ink-faint);
+}
+.flow-step:last-child { padding-bottom: 0; }
+.flow-step-head {
+  display: flex;
+  align-items: baseline;
+  gap: 0.7em;
+  margin-bottom: 0.4em;
+}
+.flow-step-num {
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--c-dusty-deep);
+  flex: none;
+}
+.flow-step-title { display: flex; flex-direction: column; gap: 0.15em; }
+.flow-step-title b {
+  font-family: var(--f-ui);
+  font-weight: 700;
+  font-size: 0.92rem;
+  letter-spacing: 0.03em;
+  color: var(--c-ink);
+}
+.flow-step-jp {
+  font-family: var(--f-jp);
+  font-size: 0.76rem;
+  color: var(--c-ink-soft);
+}
+.flow-step-text {
+  margin: 0;
+  padding-left: calc(1.05rem + 0.7em);
+  font-size: 0.86rem;
+  line-height: 1.75;
+  color: var(--c-ink-soft);
+  white-space: pre-line;
+}
+
+/* ---- PRICE ---- */
+.price-list { margin-top: 0.6rem; display: flex; flex-direction: column; gap: 0.9rem; }
+.price-plan {
+  position: relative;
+  border: 1px solid var(--c-ink-faint);
+  border-radius: 12px;
+  padding: 1.1rem 1.2rem;
+  background: rgba(253,252,248,0.5);
+}
+.price-plan--recommended {
+  border-color: var(--c-dusty-deep);
+  background: rgba(111,139,156,0.08);
+}
+.price-plan-badge {
+  position: absolute;
+  top: -0.65rem;
+  left: 1.1rem;
+  background: var(--c-dusty-deep);
+  color: var(--c-white);
+  font-family: var(--f-ui);
+  font-weight: 700;
+  font-size: 0.6rem;
+  letter-spacing: 0.06em;
+  padding: 0.3em 0.75em;
+  border-radius: 999px;
+  box-shadow: 0 2px 6px rgba(20,22,20,0.18);
+}
+.price-plan-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.6em;
+}
+.price-plan-name {
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--c-ink);
+}
+.price-plan-duration {
+  font-family: var(--f-ui);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  color: var(--c-dusty-deep);
+}
+.price-plan-price {
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: 1.15rem;
+  color: var(--c-dusty-deep);
+  margin: 0.35em 0 0.5em;
+}
+.price-plan-text {
+  margin: 0;
+  font-size: 0.85rem;
+  line-height: 1.75;
+  color: var(--c-ink-soft);
+  white-space: pre-line;
+}
+.price-fineprint { margin-top: 1.3rem; }
+.price-fineprint p {
+  margin: 0 0 0.85rem;
+  font-size: 0.75rem;
+  line-height: 1.75;
+  color: var(--c-ink-soft);
+  white-space: pre-line;
+}
+.price-fineprint p:last-child { margin-bottom: 0; }
+.price-extension {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--c-ink-faint);
+  display: flex;
+  align-items: baseline;
+  gap: 0.7em;
+}
+.price-extension-label {
+  flex: none;
+  font-family: var(--f-ui);
+  font-weight: 700;
+  font-size: 0.62rem;
+  letter-spacing: 0.05em;
+  color: var(--c-dusty-deep);
+  border: 1px solid var(--c-dusty-deep);
+  border-radius: 999px;
+  padding: 0.3em 0.7em;
+}
+.price-extension-text {
+  margin: 0;
+  font-size: 0.75rem;
+  line-height: 1.75;
+  color: var(--c-ink-soft);
+  white-space: pre-line;
+}
+
+/* ---- FAQ ---- */
+.faq-list { margin-top: 0.2rem; }
+.faq-item {
+  padding: 1rem 0;
+  border-top: 1px solid var(--c-ink-faint);
+}
+.faq-item:last-child { padding-bottom: 0; }
+.faq-q {
+  font-family: var(--f-ui);
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--c-ink);
+  margin-bottom: 0.45em;
+}
+.faq-a {
+  margin: 0;
+  font-size: 0.86rem;
+  line-height: 1.75;
+  color: var(--c-ink-soft);
+  white-space: pre-line;
+}
+
+/* ---- POLICY（アコーディオン） ---- */
+.policy-accordion { margin-top: 0.5rem; }
+.policy-acc-item { border-top: 1px solid var(--c-ink-faint); }
+.policy-acc-item:last-child { border-bottom: 1px solid var(--c-ink-faint); }
+.policy-acc-trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1em;
+  padding: 1.05rem 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  font-family: var(--f-jp);
+  font-weight: 700;
+  font-size: 0.94rem;
+  line-height: 1.5;
+  color: var(--c-ink);
+}
+.policy-acc-icon {
+  flex: none;
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--c-dusty-deep);
+  background: var(--c-card);
+  transition: transform 0.3s var(--ease);
+}
+.policy-acc-item.is-open .policy-acc-icon { transform: rotate(45deg); }
+.policy-acc-panel {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s var(--ease);
+}
+.policy-acc-body {
+  margin: 0;
+  padding: 0 0 1.5rem;
+  font-size: 0.89rem;
+  line-height: 1.9;
+  color: var(--c-ink-soft);
+  white-space: pre-line;
+}
+
+/* ---- モーダル内の小さな補足リンク（例：ABOUTの「担当スタッフについて」） ---- */
+.modal-footnote { margin-top: 1.6rem; }
+.modal-footnote-trigger {
+  display: inline-flex; align-items: center; gap: 0.4em;
+  background: none; border: none; padding: 0; cursor: pointer;
+  font-family: var(--f-ui); font-weight: 600; font-size: 0.78rem;
+  color: var(--c-dusty-deep);
+  text-underline-offset: 3px;
+  text-decoration: underline;
+}
+.modal-footnote-trigger span.arrow { transition: transform 0.3s var(--ease); }
+.modal-footnote.is-open .modal-footnote-trigger span.arrow { transform: rotate(90deg); }
+.modal-footnote-panel {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s var(--ease);
+}
+.modal-footnote-body {
+  margin: 0.8rem 0 0;
+  padding: 0.9rem 1rem;
+  border-radius: 10px;
+  background: rgba(42,44,43,0.04);
+  font-size: 0.82rem;
+  line-height: 1.85;
+  color: var(--c-ink-soft);
+  white-space: pre-line;
+}
+
+/* ---- 独立した案内枠（例：ABOUT/PRIVATEの「お子さま連れの方へ」） ---- */
+.modal-box {
+  margin-top: 1.5rem;
+  padding: 1.1rem 1.2rem;
+  border: 1px solid var(--c-ink-faint);
+  border-radius: 12px;
+  background: rgba(253,252,248,0.5);
+}
+.modal-box-title {
+  font-family: var(--f-ui);
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--c-ink);
+  margin: 0 0 0.65em;
+}
+.modal-box-text {
+  margin: 0 0 0.65em;
+  font-size: 0.86rem;
+  line-height: 1.8;
+  color: var(--c-ink-soft);
+  white-space: pre-line;
+}
+.modal-box-note {
+  margin: 0;
+  font-size: 0.74rem;
+  line-height: 1.7;
+  color: var(--c-ink-soft);
+  opacity: 0.85;
+  white-space: pre-line;
+}
+
+/* ---- YOUR DAY: 過ごし方シナリオ ---- */
+.scenario-list { margin-top: 0.7rem; display: flex; flex-direction: column; gap: 1.1rem; }
+.scenario-title {
+  margin: 0 0 0.3em;
+  font-family: var(--f-ui);
+  font-weight: 700;
+  font-size: 0.88rem;
+  color: var(--c-ink);
+}
+.scenario-text {
+  margin: 0;
+  font-size: 0.86rem;
+  line-height: 1.8;
+  color: var(--c-ink-soft);
+  white-space: pre-line;
+}
+
+/* ---- 写真投稿：複数写真のギャラリー ---- */
+.modal-gallery-item { margin: 0 0 0.7rem; border-radius: 12px; overflow: hidden; background: var(--c-card); }
+.modal-gallery-item img { width: 100%; display: block; }
+.modal-gallery-item:last-of-type { margin-bottom: 0; }
+.modal-gallery-caption {
+  margin: 1rem 0 0;
+  font-size: 0.88rem;
+  line-height: 1.75;
+  color: var(--c-ink-soft);
+}
+
+/* ==========================================================
+   RESPONSIVE
+========================================================== */
+@media (max-width: 420px) {
+  .tile-jp { display: none; }
+  .tile-content { padding: 4cqw 6cqw 7cqw; }
+  .cream-portrait { display: none; }
+  .profile-actions { gap: 0.4rem; }
+}
+@media (min-width: 1024px) {
+  .page { max-width: 760px; padding-top: clamp(3rem, 6vw, 4.5rem); }
+  .bg-photo::after { background: linear-gradient(180deg, rgba(35,42,48,0.28) 0%, rgba(40,42,38,0.5) 45%, var(--c-bg) 78%); }
+}
+</style>
+</head>
+<body>
+
+<div class="bg-photo">
+  <img id="heroBg" src="images/hero-bg.jpg" alt="石垣島の海と自然"
+       onerror="this.onerror=null;this.src='https://commons.wikimedia.org/wiki/Special:FilePath/Kabira_Bay_Ishigaki_Island41s3s4500.jpg?width=1600'">
+</div>
+<div class="grain"></div>
+
+<div class="page">
+
+  <header class="profile-top">
+    <div class="avatar" id="avatar"><img src="images/avatar.jpg" alt=""></div>
+    <div class="profile-stats">
+      <div class="stat"><b id="postsCount">12</b><span>posts</span></div>
+      <div class="stat"><b>1,006</b><span>followers</span></div>
+      <div class="stat"><b>24</b><span>following</span></div>
+    </div>
+  </header>
+
+  <div class="profile-bio">
+    <p class="profile-name" id="profileName">ISHIGAKI PRIVATE</p>
+    <p class="profile-category">Private Guide &amp; Local Attendant</p>
+    <p class="profile-bio-line profile-bio-line--lead">📍 1日1組｜完全プライベートガイド＆アテンド</p>
+    <p class="profile-bio-emphasis">大切な人との時間を、心ゆくまで🌿</p>
+    <p class="profile-bio-body">旅先で何をするか、どこへ行くか。<br>調べたり、迷ったり、段取りを考えたり。<br>そんな時間も、家族や恋人と楽しむ時間に変えられたら。</p>
+    <p class="profile-bio-body">ご家族で思いきり遊ぶ一日も、<br>ご夫婦や恋人とゆっくり過ごすひとときも。<br>周りに気を遣わず、自分たちのペースで。</p>
+    <p class="profile-bio-line">🏝️ <span>あなたの「こう過ごしたい」を伺い、<br>石垣島での一日をオーダーメイドします。</span></p>
+    <p class="profile-bio-line">🔒 <span>元芸能マネジメント・社長秘書の経験を活かし、<br>事前の段取りから、当日の気配りまで。<br>プライバシーを大切に、心地よい距離感で寄り添います。</span></p>
+    <a class="profile-bio-line profile-bio-line--link" href="https://www.instagram.com/hi_fumifumi?stkn=NjIzajBsZXBzNGM2" target="_blank" rel="noopener noreferrer">📷 Instagram｜@hi_fumifumi ↗</a>
+  </div>
+
+  <div class="profile-actions">
+    <button type="button" class="pbtn pbtn--primary" data-open="about">ABOUT</button>
+    <button type="button" class="pbtn" data-open="contact">MESSAGE</button>
+    <a class="pbtn" href="https://www.instagram.com/hi_fumifumi?stkn=NjIzajBsZXBzNGM2" target="_blank" rel="noopener noreferrer">FOLLOW</a>
+    <button type="button" class="pbtn-more" id="moreBtn" aria-label="リンクをコピー">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+  </div>
+
+  <nav class="profile-tabs" id="profileTabs">
+    <button type="button" class="ptab is-active" data-tab="grid" aria-label="投稿一覧" aria-current="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="6" height="6" rx="1"/><rect x="9.5" y="3" width="6" height="6" rx="1"/><rect x="16" y="3" width="5" height="6" rx="1"/><rect x="3" y="9.5" width="6" height="6" rx="1"/><rect x="9.5" y="9.5" width="6" height="6" rx="1"/><rect x="16" y="9.5" width="5" height="6" rx="1"/><rect x="3" y="16" width="6" height="5" rx="1"/><rect x="9.5" y="16" width="6" height="5" rx="1"/><rect x="16" y="16" width="5" height="5" rx="1"/></svg>
+    </button>
+    <button type="button" class="ptab" data-tab="reels" aria-label="動画">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2.5" y="4" width="19" height="16" rx="3"/><path d="M2.5 9h19M8 4 5 9M15 4l-3 5M21 9l-3-5"/><path d="M10.5 12.5v4l3.5-2z" fill="currentColor" stroke="none"/></svg>
+    </button>
+    <button type="button" class="ptab" data-tab="tagged" aria-label="紹介">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2.5" y="2.5" width="19" height="19" rx="3"/><circle cx="12" cy="10" r="3"/><path d="M6.5 18c0-2.8 2.5-5 5.5-5s5.5 2.2 5.5 5"/></svg>
+    </button>
+  </nav>
+
+  <main class="grid" id="grid"></main>
+  <div class="tab-placeholder" id="tabPlaceholder" hidden>
+    <p id="tabPlaceholderText"></p>
+  </div>
+
+  <footer class="page-footer">
+    <div class="page-footer-mark" id="footerMark">ISHIGAKI PRIVATE</div>
+    <div class="page-footer-meta">© 2026 — Private Guide &amp; Local Attendant, Ishigaki</div>
+  </footer>
+
+</div>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-panel" id="modalPanel" role="dialog" aria-modal="true">
+    <div class="modal-close-wrap">
+      <button type="button" class="modal-back" id="modalBack" aria-label="戻る">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        戻る
+      </button>
+      <button type="button" class="modal-close" id="modalClose" aria-label="閉じる">✕</button>
+    </div>
+    <div class="modal-media" id="modalMedia"></div>
+    <div class="modal-body">
+      <div class="modal-num" id="modalNum"></div>
+      <h2 class="modal-heading" id="modalHeading"></h2>
+      <p class="modal-name" id="modalName" hidden></p>
+      <div class="modal-content" id="modalContent"></div>
+      <a class="modal-cta" id="modalCta" href="https://docs.google.com/forms/d/e/1FAIpQLSe5_Q70HGBFkDnHUwb6QQwcfzdNxUMtVsw1jPJ6z9Xozvo4NA/viewform">相談してみる <span>→</span></a>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ------------------------------------------------------------
+     1) BRAND — 後から変更しやすいよう、ここにまとめています
+  ------------------------------------------------------------ */
+  var BRAND = {
+    name: "ISHIGAKI PRIVATE",
+    tagline: "Travel Your Way.",
+    avatarAlt: "案内人のプロフィール写真"
+  };
+  document.querySelector("#avatar img").alt = BRAND.avatarAlt;
+  document.getElementById("profileName").textContent = BRAND.name;
+  document.getElementById("footerMark").textContent = BRAND.name;
+  document.title = BRAND.name + " ｜ " + BRAND.tagline;
+
+  /* ------------------------------------------------------------
+     2) CARDS — 12枚のグリッドとモーダルの中身は、すべてここから生成されます
+  ------------------------------------------------------------ */
+  var FALLBACK = "https://commons.wikimedia.org/wiki/Special:FilePath/";
+  var CARDS = [
+    {
+      id: "private", num: "01", en: "PRIVATE", jp: "あなたに合わせた旅", tone: "dusty",
+      template: "photo",
+      img: "images/card-private.jpg", fallback: "https://commons.wikimedia.org/wiki/Special:FilePath/Nishibama_beach_Okinawa_Aka_Island.jpg?width=900",
+      modalImg: "images/card-private-modal.jpg", modalFallback: "https://commons.wikimedia.org/wiki/Special:FilePath/Nishibama_beach_Okinawa_Aka_Island.jpg?width=1200",
+      modalHeading: "ONE DAY. ONE GROUP.",
+      modalText: "大切な人との時間を、心ゆくまで。\n\n旅先での調べものや段取りに追われず、目の前の景色や、一緒にいる人との時間を楽しんでいただけるように。\n\n1日1組の完全プライベートで、あなたの「こう過ごしたい」に合わせて、石垣島での一日をご提案します。\n\n家族で思いきり遊びたい。\n恋人と静かな場所で過ごしたい。\n予定を詰め込まず、ゆっくりしたい。\n\nご希望を事前に伺い、当日も天候や体調、お客様のペースに合わせて柔軟に寄り添います。\n\n旅の思い出を写真や動画で残したい時も、できる範囲でお手伝いします。",
+      modalBox: { title: "👒 お子さま連れの方へ", text: "お子さまの年齢やペースに合わせて、ご家族みんなが楽しめる過ごし方をご提案します。\n\nお預かりが必要な場合は、外部のベビーシッターサービスの利用についてご相談ください。", note: "※ガイドによる託児は行っておりません。シッターの利用は別料金・事前確認制となり、空き状況によってはご希望に添えない場合があります。" }
+    },
+    {
+      id: "yourday", num: "02", en: "YOUR DAY", jp: "こんな島時間を過ごせます", tone: "sage",
+      template: "photo",
+      img: "images/card-experience.jpg", fallback: "https://commons.wikimedia.org/wiki/Special:FilePath/Underwater_yaeyama_okinawa_Japan.jpg?width=900",
+      modalImg: "images/card-experience-modal.jpg", modalFallback: "https://commons.wikimedia.org/wiki/Special:FilePath/Underwater_yaeyama_okinawa_Japan.jpg?width=1200",
+      modalType: "scenarios",
+      modalHeading: "MADE FOR YOU.",
+      modalIntro: "どこへ行くかだけでなく、どんな時間を過ごしたいか。\nあなたの希望から、一日を一緒に考えます。",
+      modalScenarios: [
+        { title: "家族で夢中になる時間", text: "お子さまのペースで海や自然に触れ、大人も一緒に楽しむ一日。" },
+        { title: "島の人と出会う時間", text: "地元の人との会話や交流を通して、島の暮らしに触れるひととき。" },
+        { title: "静かな景色を楽しむ時間", text: "海を眺めたり、夕日を待ったり。予定を詰め込まず、ゆっくり過ごす時間。" },
+        { title: "島の食を楽しむ時間", text: "好みやその日の過ごし方に合わせて、島ならではの食を楽しむひととき。" }
+      ]
+    },
+    {
+      id: "about", num: "03", en: "ABOUT", jp: "私が案内する石垣島", tone: "sand",
+      template: "photo",
+      img: "images/card-about.jpg", fallback: "https://commons.wikimedia.org/wiki/Special:FilePath/Sunset_beach_couple_(Unsplash).jpg?width=900",
+      modalImg: "images/card-about-modal.jpg", modalFallback: "https://commons.wikimedia.org/wiki/Special:FilePath/Sunset_beach_couple_(Unsplash).jpg?width=1200",
+      modalAspect: "4 / 5",
+      modalHeading: "ABOUT HIFUMI.",
+      modalName: "ひふみ",
+      modalText: "東京から子どもたちと石垣島へ移住してきました。\n\nこの島に惹かれたのは、美しい海だけではありません。\n地域の行事に参加したり、島の人と話したり。\n暮らしの中で感じる人の温かさや、つながりが、私にとって大きな魅力でした。\n\n訪れる方にも、景色を楽しむだけでなく、この島の人や暮らしに触れる時間を過ごしていただけたらと思っています。\n\n家族で笑った思い出も、誰かとの何気ない会話も。\n旅が終わってからも心に残り、「また会いに来たい」「また帰ってきたい」と思える人や場所に出会ってもらえたら嬉しいです。\n\n元芸能マネジメント・社長秘書の経験を活かし、お客様それぞれの過ごし方とプライバシーを大切に、心地よい距離感でご案内します。",
+      modalFootnote: { label: "担当スタッフについて", body: "基本的には、ひふみがガイド・アテンドを担当します。\n\nただし、子どもの体調不良など、\nやむを得ない事情で私自身が対応できない場合は、\n普段から一緒に活動している信頼できるスタッフに\n担当をお願いすることがあります。\n\nその場合は必ず事前にご連絡し、\nご希望や当日のプランもきちんと共有したうえで対応します。\n\n「ひふみにお願いしたい」というご希望がある場合は、\n日程変更も含めてご相談ください。" }
+    },
+    {
+      id: "price", num: "04", en: "PRICE & FLOW", jp: "料金とご利用の流れ", tone: "dusty",
+      wordWrap: true,
+      template: "photo",
+      img: "images/card-local.jpg", fallback: "https://commons.wikimedia.org/wiki/Special:FilePath/Ishigaki_Public_Market,_Ishigaki,_Japan.JPG?width=900",
+      modalImg: "images/card-local-modal.jpg", modalFallback: "https://commons.wikimedia.org/wiki/Special:FilePath/Ishigaki_Public_Market,_Ishigaki,_Japan.JPG?width=1200",
+      modalType: "priceFlow",
+      modalHeading: "PRICE & FLOW",
+      modalIntro: "当日のガイド・アテンドだけでなく、\n事前のヒアリングからプランニング、\n必要なご提案・サポートまで含めてお見積もりします。\n\n料金は1名あたりではなく、\n1組あたりの料金です。",
+      modalPlans: [
+        { name: "HALF DAY", duration: "4 HOURS", price: "¥55,000〜 / 1組",
+          text: "限られた時間でも石垣島をしっかり楽しみたい方に。" },
+        { name: "PRIVATE DAY", duration: "7 HOURS", price: "¥88,000〜 / 1組",
+          recommended: true, badge: "RECOMMENDED",
+          text: "石垣島での一日をゆっくり楽しみたい方に。" },
+        { name: "LONG DAY", duration: "9 HOURS", price: "¥110,000〜 / 1組",
+          text: "より自由に、たっぷり過ごしたい方に。" }
+      ],
+      modalIncludes: [
+        "事前ヒアリング",
+        "ご希望に合わせたプランニング",
+        "おすすめの場所や体験などのご提案",
+        "可能な範囲での予約サポート",
+        "完全プライベートでのガイド＆アテンド",
+        "当日の天候や混雑、気分に合わせた柔軟な変更",
+        "子連れ旅などのちょっとしたサポート",
+        "必要に応じた写真・動画撮影のお手伝い",
+      ],
+      modalFinePrint: [
+        "※表示料金は目安料金です。\nご希望の内容・人数・必要なサポートによって料金は異なります。\n事前のヒアリング後、正式なお見積もりをご案内します。",
+        "※施設利用料・アクティビティ体験料・飲食代・\nタクシー・駐車場代などの実費は別途となります。",
+        "※ガイドのアクティビティ参加や食事同行をご希望の場合、\nガイド分の参加費・飲食代などの実費もお客様負担となります。",
+        "※外部ベビーシッターの利用をご希望の場合は、対応の可否を確認し、別途料金をご案内します。",
+      ],
+      modalExtension: { label: "延長", text: "当日のスケジュールに余裕がある場合のみ、\n1時間 ¥15,000で延長可能です。" },
+      modalFlowHeading: "ご利用の流れ",
+      modalFlowSteps: [
+        { num: "01", title: "ご相談", text: "「こんな石垣島を過ごしてみたい」から、気軽にご連絡ください。" },
+        { num: "02", title: "ご提案・お見積もり", text: "ご希望を伺い、内容とお見積もりをご提案します。" },
+        { num: "03", title: "ご予約", text: "内容にご納得いただけたら、正式にご予約となります。" },
+        { num: "04", title: "当日", text: "完全プライベートで、その日の状況に合わせて柔軟にご案内します。" }
+      ]
+    },
+    {
+      id: "faq", num: "05", en: "FAQ", jp: "よくある質問・ご予約について", tone: "sage",
+      template: "photo",
+      img: "images/card-support-1.jpg", fallback: "https://commons.wikimedia.org/wiki/Special:FilePath/Okinawa_soba_and_goya_chanpuru.jpg?width=900",
+      modalImg: "images/card-support-modal.jpg", modalFallback: "https://commons.wikimedia.org/wiki/Special:FilePath/Okinawa_soba_and_goya_chanpuru.jpg?width=1200",
+      modalType: "faq",
+      modalHeading: "HOW DOES IT WORK?",
+      modalSubcopy: "気になることを、まとめました。",
+      modalFaq: [
+        { q: "車での送迎はしてもらえますか？", a: "送迎サービス自体は行っていません。\n\n基本的には事前に決めた場所で合流し、\nそこから一緒に1日をスタートします。\n\n移動は、\nお客様のレンタカーや\nタクシー・ハイヤーなどをご利用いただきます。" },
+        { q: "移動中も一緒にいてもらえますか？", a: "もちろん可能です。\n\nお客様が利用される車に一緒に乗って移動することも、\nそれぞれ別の車で同じ場所へ移動することもできます。\n\nその日の過ごし方に合わせてご相談ください。" },
+        { q: "運転もしてもらえますか？", a: "お客様を乗せて送迎するサービスは行っていません。\n\nレンタカー、タクシー、ハイヤーなど、\nご希望に合った移動方法をご案内します。" },
+        { q: "ずっと一緒に行動する必要がありますか？", a: "いいえ。\n\n「移動中や必要な時だけ一緒にいてほしい」\n「この場所では家族だけで過ごしたい」\n\nなど、\nその日の希望に合わせて距離感も調整できます。\n\n必要がなければ近くで待機し、\n必要なタイミングで再度合流することも可能です。" },
+        { q: "アクティビティにも一緒に参加してもらえますか？", a: "ご希望があれば可能です。\n\n例えば、\n\n「子ども連れなので一緒に参加してサポートしてほしい」\n「体験中も写真を撮ってほしい」\n\nなどの場合は同行します。\n\nその際、\n私自身にもアクティビティ参加料や\n施設利用料などが発生する場合は、\n別途実費をご負担いただきます。" },
+        { q: "食事にも一緒に来てもらえますか？", a: "必要に応じて可能です。\n\n例えば、\nお子さま連れで少しサポートがほしい場合や、\n食事中もアテンドを希望される場合などは\n一緒に同行します。\n\n同行にあたり、\n私自身の飲食代等が発生する場合は\n別途実費をご負担いただきます。\n\nもちろん、\n\n「食事は家族だけでゆっくりしたい」\n\nという場合は、\nその時間は別行動でも大丈夫です。" },
+        { q: "子ども連れでもお願いできますか？", a: "もちろんです。\n\n私自身も子どもとの暮らしをしているので、\n子連れならではの予定変更や、\nちょっと手が足りない場面にも\nできる範囲で柔軟にサポートします。" },
+        { q: "子どもを預けることはできますか？", a: "ガイドによる託児は行っておりません。お預かりが必要な場合は、外部ベビーシッターサービスの利用についてご相談ください。別料金・事前確認制となり、日時やお子さまの年齢・人数、空き状況によってはご希望に添えない場合があります。" },
+        { q: "当日に予定を変更できますか？", a: "はい。\n\n天候や混雑、\nお子さまの様子、\n\n「やっぱりこっちに行きたい」\n「今日は少しゆっくりしたい」\n\nなど、\nその日の状況に合わせて柔軟に変更できます。\n\n完全プライベートだからこそ、\n決めた予定をこなすことよりも、\nその時いちばん心地いい過ごし方を大切にします。" },
+        { q: "ガイド中に別途かかる費用はありますか？", a: "飲食代、\nアクティビティ料金、\n施設利用料、\n交通費などは別途実費となります。\n\nまた、\nお客様のご希望により、\n私も一緒に体験・入場・食事等をする必要がある場合、\n私の分の実費についてもご負担をお願いします。\n\n事前に分かる費用については、\nお見積もりの際にできるだけ分かりやすくお伝えします。" },
+        { q: "まだ何をしたいか決まっていなくても相談できますか？", a: "もちろんです。\n\n「人が少ないところに行きたい」\n「子どもと楽しみたい」\n「ローカルな石垣を知りたい」\n「とにかくいい感じの1日にしてほしい」\n\nくらいのイメージからで大丈夫です。\n\nお話を聞きながら、\n一緒にその日の過ごし方をつくっていきます。" },
+        { q: "キャンセルについて教えてください", a: "完全プライベートで1日1組のみお受けしているため、\nご予約確定後はそのお客様のために日程を確保し、\n事前準備やプランニングを進めています。\n\nそのため、キャンセルの場合は\n以下のキャンセル料をお願いしています。\n\n・8日前まで：無料\n・7日前〜4日前：ご予約料金の30％\n・3日前〜2日前：ご予約料金の50％\n・前日：ご予約料金の80％\n・当日／無断キャンセル：ご予約料金の100％\n\nお客様都合によるキャンセルについても、\n原則として上記キャンセル規定が適用されます。\n\nまた、すでに予約・手配済みのアクティビティや飲食店等に\nキャンセル料が発生する場合は、\n各事業者の規定に基づく実費も別途ご負担いただきます。\n\n台風や安全上の理由など、\n当方の判断でサービス自体を実施できない場合は、\n「台風や悪天候の場合」の対応に基づきます。" },
+        { q: "日程変更はできますか？", a: "できるだけ早めにご連絡ください。\n\n8日前までで、\n変更後の日程に空きがある場合は、\n1回まで無料で日程変更を承ります。\n\n7日前以降の日程変更については、\n原則としてキャンセル規定に基づいて対応します。\n\n台風や悪天候など、\nお客様都合ではない事情については\nできる限り柔軟に対応します。" },
+        { q: "台風や悪天候の場合はどうなりますか？", a: "安全を最優先に判断し、\nガイド・アテンド自体の実施が難しい場合は、\n\n・別日への変更\nまたは\n・キャンセル料なしでの中止\n\nとして対応します。\n\nすでにお支払いいただいている\nガイド・アテンド料金については、\n実施できなかった分を返金いたします。\n\n一部の予定だけ変更が必要な場合は、\nその日の状況に合わせて別の過ごし方をご提案します。" },
+        { q: "お支払い方法を教えてください", a: "内容とお見積もりにご納得いただけましたら、\n銀行振込にてお支払いをお願いしております。\n\n振込先はご予約時に個別にご案内いたします。\n振込手数料はお客様のご負担となります。\n\nご入金確認後、正式にご予約確定となります。" },
+        { q: "遅刻しそうな場合はどうすればいいですか？", a: "分かった時点で、できるだけ早めにご連絡ください。\n\nお客様の遅刻によって開始時間が遅れた場合も、\n原則として終了時間は変更されません。\n\nそのため、ご案内時間が短くなる場合があります。\n\n予約済みのアクティビティ等に間に合わなくなった場合も、\nできる範囲で別の過ごし方をご提案します。" },
+        { q: "プライバシーは守られますか？", a: "お預かりした個人情報は、本サービスの提供に必要な範囲で使用し、\nご本人の同意なく第三者へ提供することはありません。\n\nガイド中に撮影した写真・動画も、\nご本人の確認なくInstagramやWebサイト等に掲載することはありません。\n\n元芸能マネジメント・社長秘書の経験を活かし、\nお客様のプライベートを大切に対応します。" }
+      ]
+    },
+    {
+      id: "contact", num: "06", en: "CONTACT", jp: "まずはご相談ください", tone: "sand",
+      template: "photo",
+      img: "images/card-ishigaki.jpg", fallback: "https://commons.wikimedia.org/wiki/Special:FilePath/Kabira_Bay_Ishigaki_Island41s3s4500.jpg?width=900",
+      modalImg: "images/card-ishigaki-modal.jpg", modalFallback: "https://commons.wikimedia.org/wiki/Special:FilePath/Kabira_Bay_Ishigaki_Island41s3s4500.jpg?width=1200",
+      modalHeading: "LET'S TALK.",
+      modalText: "まだ予定が決まっていなくても大丈夫です。\n\n「こんなふうに過ごしたい」\n「子どもと一緒に楽しみたい」\n「静かな場所でゆっくりしたい」\n\nそんなご希望から、まずはお聞かせください。\nあなたに合った島時間を、一緒に考えます。",
+      ctaLabel: "まずは相談してみる"
+    },
+    {
+      id: "post-smile", num: "07", en: "SMILE", jp: "屈託のない笑顔と", tone: "dusty",
+      template: "photo-plain",
+      img: "images/card-yourday.jpg", fallback: "https://commons.wikimedia.org/wiki/Special:FilePath/Sunset_beach_couple_(Unsplash).jpg?width=900",
+      modalType: "gallery",
+      modalHeading: "SMILE",
+      modalGallery: [
+        { src: "images/card-yourday-modal.jpg", fallback: "https://commons.wikimedia.org/wiki/Special:FilePath/Sunset_beach_couple_(Unsplash).jpg?width=1200" },
+        { src: "images/card-yourday.jpg", fallback: "https://commons.wikimedia.org/wiki/Special:FilePath/Sunset_beach_couple_(Unsplash).jpg?width=900" }
+      ]
+    },
+    {
+      id: "post-treats", num: "08", en: "ISLAND TREATS", jp: "島のおやつ時間", tone: "sand",
+      template: "photo-plain",
+      img: "images/card-flow.jpg", fallback: "https://commons.wikimedia.org/wiki/Special:FilePath/Nishibama_beach_Okinawa_Aka_Island.jpg?width=900",
+      modalType: "gallery",
+      modalHeading: "ISLAND TREATS",
+      modalGallery: [
+        { src: "images/card-flow-modal.jpg", fallback: "https://commons.wikimedia.org/wiki/Special:FilePath/Nishibama_beach_Okinawa_Aka_Island.jpg?width=1200" },
+        { src: "images/card-flow.jpg", fallback: "https://commons.wikimedia.org/wiki/Special:FilePath/Nishibama_beach_Okinawa_Aka_Island.jpg?width=900" }
+      ]
+    },
+    {
+      id: "post-countryside", num: "09", en: "COUNTRYSIDE", jp: "動物たちとのふれあい", tone: "sage",
+      template: "photo-plain",
+      img: "images/card-price.jpg", fallback: "https://commons.wikimedia.org/wiki/Special:FilePath/Ishigaki_center_city.jpg?width=900",
+      modalType: "gallery",
+      modalHeading: "COUNTRYSIDE",
+      modalGallery: [
+        { src: "images/card-price-modal.jpg", fallback: "https://commons.wikimedia.org/wiki/Special:FilePath/Ishigaki_center_city.jpg?width=1200" },
+        { src: "images/card-price.jpg", fallback: "https://commons.wikimedia.org/wiki/Special:FilePath/Ishigaki_center_city.jpg?width=900" }
+      ]
+    },
+    {
+      id: "post-paddle", num: "10", en: "PADDLE READY", jp: "静かな入り江で", tone: "dusty",
+      template: "photo-plain",
+      img: "images/card-faq.jpg", fallback: "https://commons.wikimedia.org/wiki/Special:FilePath/Ishigaki_center_city.jpg?width=900",
+      modalType: "gallery",
+      modalHeading: "PADDLE READY",
+      modalGallery: [
+        { src: "images/card-faq-modal.jpg", fallback: "https://commons.wikimedia.org/wiki/Special:FilePath/Ishigaki_center_city.jpg?width=1200" },
+        { src: "images/card-faq.jpg", fallback: "https://commons.wikimedia.org/wiki/Special:FilePath/Ishigaki_center_city.jpg?width=900" }
+      ]
+    },
+    {
+      id: "post-cruising", num: "11", en: "CRUISING", jp: "島をめぐる相棒と", tone: "sage",
+      template: "photo-plain",
+      img: "images/card-policy.jpg", fallback: "https://commons.wikimedia.org/wiki/Special:FilePath/Ishigaki_center_city.jpg?width=900",
+      modalType: "gallery",
+      modalHeading: "CRUISING",
+      modalGallery: [
+        { src: "images/card-policy-modal.jpg", fallback: "https://commons.wikimedia.org/wiki/Special:FilePath/Ishigaki_center_city.jpg?width=1200" },
+        { src: "images/card-policy.jpg", fallback: "https://commons.wikimedia.org/wiki/Special:FilePath/Ishigaki_center_city.jpg?width=900" }
+      ]
+    },
+    {
+      id: "post-arrival", num: "12", en: "ARRIVAL", jp: "石垣島へ、旅のはじまり", tone: "sand",
+      template: "photo-plain",
+      img: "images/card-contact.jpg", fallback: "https://commons.wikimedia.org/wiki/Special:FilePath/Ishigaki_center_city.jpg?width=900",
+      modalType: "gallery",
+      modalHeading: "ARRIVAL",
+      modalGallery: [
+        { src: "images/card-contact-modal.jpg", fallback: "https://commons.wikimedia.org/wiki/Special:FilePath/Ishigaki_center_city.jpg?width=1200" },
+        { src: "images/card-contact.jpg", fallback: "https://commons.wikimedia.org/wiki/Special:FilePath/Ishigaki_center_city.jpg?width=900" }
+      ]
+    }
+  ];
+  document.getElementById("postsCount").textContent = CARDS.length;
+
+  /* ------------------------------------------------------------
+     grid rendering
+  ------------------------------------------------------------ */
+  var grid = document.getElementById("grid");
+
+  function imgTag(cls, src, fallback, alt) {
+    return '<img class="' + cls + '" src="' + src + '" alt="' + alt + '" ' +
+      (fallback ? 'onerror="this.onerror=null;this.src=\'' + fallback + '\'"' : '') + '>';
+  }
+
+  CARDS.forEach(function (c) {
+    var tile = document.createElement("button");
+    tile.type = "button";
+    tile.className = "tile";
+    tile.setAttribute("data-tone", c.tone || "dusty");
+    tile.setAttribute("data-id", c.id);
+
+    var html = "";
+    var wordCls = "tile-word" + (c.wordWrap ? " tile-word--wrap" : "");
+    if (c.template === "photo") {
+      html += '<div class="tile-photo">' + imgTag("", c.img, c.fallback, c.en) + '</div>';
+      html += '<div class="tile-scrim"></div>';
+      html += '<div class="tile-content"><span class="tile-num">' + c.num + '</span><span class="' + wordCls + '">' + c.en + '</span><span class="tile-jp">' + c.jp + '</span></div>';
+    } else if (c.template === "photo-plain") {
+      // 番号・英字タイトル・日本語キャプションを一切乗せない、写真だけのタイル
+      html += '<div class="tile-photo">' + imgTag("", c.img, c.fallback, c.en || "石垣島の写真") + '</div>';
+    } else if (c.template === "search") {
+      html += '<div class="tile-photo">' + imgTag("", c.img, c.fallback, c.en) + '</div>';
+      html += '<div class="tile-scrim"></div>';
+      html += '<span class="tile-search">' + c.searchLabel + '</span>';
+      html += '<div class="tile-content"><span class="tile-num">' + c.num + '</span><span class="tile-word">' + c.en + '</span><span class="tile-jp">' + c.jp + '</span></div>';
+    } else if (c.template === "collage") {
+      html += '<div class="tile-collage">' + imgTag("collage-main", c.img, c.fallback, c.en) + imgTag("collage-sub", c.img2, c.fallback2, c.en) + '</div>';
+      html += '<div class="tile-scrim"></div>';
+      html += '<div class="tile-content"><span class="tile-num">' + c.num + '</span><span class="tile-word">' + c.en + '</span><span class="tile-jp">' + c.jp + '</span></div>';
+    } else if (c.template === "cream-portrait") {
+      html += '<div class="tile-cream">';
+      html += '<div class="cream-portrait">' + imgTag("", c.img, c.fallback, c.en) + '</div>';
+      html += '<span class="tile-num">' + c.num + '</span>';
+      html += '<span class="tile-word tile-word--dark">' + c.en + '</span><span class="tile-jp">' + c.jp + '</span>';
+      html += '</div>';
+    } else if (c.template === "cream") {
+      html += '<div class="tile-cream">';
+      html += '<span class="tile-num">' + c.num + '</span>';
+      html += '<span class="tile-word tile-word--dark">' + c.en + '</span><span class="tile-jp">' + c.jp + '</span>';
+      html += '<span class="tile-arrow">→</span>';
+      html += '</div>';
+    } else if (c.template === "ticket") {
+      html += '<div class="tile-ticket">';
+      html += '<span class="tile-ticket-bg-num">' + c.num + '</span>';
+      html += '<span class="tile-num">' + c.num + '</span>';
+      html += '<span class="tile-word tile-word--dark">' + c.en + '</span><span class="tile-jp">' + c.jp + '</span>';
+      html += '</div>';
+    }
+    tile.innerHTML = html;
+    tile.addEventListener("click", function () { openModal(c.id); });
+    grid.appendChild(tile);
+  });
+
+  /* ------------------------------------------------------------
+     modal
+  ------------------------------------------------------------ */
+  var overlay = document.getElementById("modalOverlay");
+  var mediaEl = document.getElementById("modalMedia");
+  var numEl = document.getElementById("modalNum");
+  var headingEl = document.getElementById("modalHeading");
+  var nameEl = document.getElementById("modalName");
+  var contentEl = document.getElementById("modalContent");
+  var ctaEl = document.getElementById("modalCta");
+
+  function el(tag, cls, text) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text != null) e.textContent = text;
+    return e;
+  }
+
+  function renderParagraphs(container, text) {
+    if (!text) return;
+    container.appendChild(el("p", "modal-text", text));
+  }
+
+  function renderSteps(container, c) {
+    renderParagraphs(container, c.modalIntro);
+    var list = el("div", "flow-list");
+    (c.modalSteps || []).forEach(function (step) {
+      var item = el("div", "flow-step");
+      var head = el("div", "flow-step-head");
+      head.appendChild(el("span", "flow-step-num", step.num));
+      var titleWrap = el("span", "flow-step-title");
+      titleWrap.appendChild(el("b", "", step.title));
+      if (step.jp) titleWrap.appendChild(el("span", "flow-step-jp", step.jp));
+      head.appendChild(titleWrap);
+      item.appendChild(head);
+      item.appendChild(el("p", "flow-step-text", step.text));
+      list.appendChild(item);
+    });
+    container.appendChild(list);
+    renderParagraphs(container, c.modalOutro);
+  }
+
+  function renderPricing(container, c) {
+    renderParagraphs(container, c.modalIntro);
+    var plans = el("div", "price-list");
+    (c.modalPlans || []).forEach(function (plan) {
+      var p = el("div", "price-plan" + (plan.recommended ? " price-plan--recommended" : ""));
+      if (plan.badge) p.appendChild(el("span", "price-plan-badge", plan.badge));
+      var head = el("div", "price-plan-head");
+      head.appendChild(el("span", "price-plan-name", plan.name));
+      head.appendChild(el("span", "price-plan-duration", plan.duration));
+      p.appendChild(head);
+      p.appendChild(el("div", "price-plan-price", plan.price));
+      p.appendChild(el("p", "price-plan-text", plan.text));
+      plans.appendChild(p);
+    });
+    container.appendChild(plans);
+
+    if (c.modalIncludes && c.modalIncludes.length) {
+      container.appendChild(el("h3", "modal-subhead", "すべてのプランに含まれるもの"));
+      var ul = el("ul", "modal-list");
+      c.modalIncludes.forEach(function (item) { ul.appendChild(el("li", "", item)); });
+      container.appendChild(ul);
+    }
+    if (c.modalFinePrint && c.modalFinePrint.length) {
+      var fine = el("div", "price-fineprint");
+      c.modalFinePrint.forEach(function (note) { fine.appendChild(el("p", "", note)); });
+      container.appendChild(fine);
+    }
+    if (c.modalExtension) {
+      var ext = el("div", "price-extension");
+      ext.appendChild(el("span", "price-extension-label", c.modalExtension.label));
+      ext.appendChild(el("p", "price-extension-text", c.modalExtension.text));
+      container.appendChild(ext);
+    }
+    if (c.modalNotes) {
+      container.appendChild(el("h3", "modal-subhead", "料金について"));
+      renderParagraphs(container, c.modalNotes);
+    }
+  }
+
+  function renderFaq(container, c) {
+    if (c.modalSubcopy) container.appendChild(el("p", "modal-subcopy", c.modalSubcopy));
+    var list = el("div", "faq-list");
+    (c.modalFaq || []).forEach(function (qa) {
+      var item = el("div", "faq-item");
+      item.appendChild(el("div", "faq-q", "Q. " + qa.q));
+      item.appendChild(el("div", "faq-a", qa.a));
+      list.appendChild(item);
+    });
+    container.appendChild(list);
+  }
+
+  function renderPolicy(container, c) {
+    renderParagraphs(container, c.modalIntro);
+    var acc = el("div", "policy-accordion");
+    (c.modalPolicyItems || []).forEach(function (item) {
+      var wrap = el("div", "policy-acc-item");
+
+      var trigger = document.createElement("button");
+      trigger.type = "button";
+      trigger.className = "policy-acc-trigger";
+      trigger.setAttribute("aria-expanded", "false");
+      trigger.appendChild(el("span", "", item.title));
+      var icon = el("span", "policy-acc-icon");
+      icon.innerHTML = '<svg viewBox="0 0 20 20" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="10" y1="3" x2="10" y2="17"/><line x1="3" y1="10" x2="17" y2="10"/></svg>';
+      trigger.appendChild(icon);
+
+      var panel = el("div", "policy-acc-panel");
+      panel.appendChild(el("p", "policy-acc-body", item.body));
+
+      trigger.addEventListener("click", function () {
+        var isOpen = wrap.classList.toggle("is-open");
+        trigger.setAttribute("aria-expanded", isOpen ? "true" : "false");
+        panel.style.maxHeight = isOpen ? panel.scrollHeight + "px" : "0px";
+      });
+
+      wrap.appendChild(trigger);
+      wrap.appendChild(panel);
+      acc.appendChild(wrap);
+    });
+    container.appendChild(acc);
+    renderParagraphs(container, c.modalOutro);
+  }
+
+  // YOUR DAY：写真とセットで見せる「過ごし方」の短いシナリオ一覧
+  function renderScenarios(container, c) {
+    renderParagraphs(container, c.modalIntro);
+    var list = el("div", "scenario-list");
+    (c.modalScenarios || []).forEach(function (s) {
+      var item = el("div", "scenario-item");
+      item.appendChild(el("p", "scenario-title", s.title));
+      item.appendChild(el("p", "scenario-text", s.text));
+      list.appendChild(item);
+    });
+    container.appendChild(list);
+    if (c.modalExample) {
+      container.appendChild(el("h3", "modal-subhead", "過ごし方の一例"));
+      var ex = el("div", "scenario-item");
+      ex.appendChild(el("p", "scenario-title", c.modalExample.title));
+      ex.appendChild(el("p", "scenario-text", c.modalExample.text));
+      container.appendChild(ex);
+      container.appendChild(el("p", "modal-subcopy", "過ごし方の一例です。ご希望や天候などに合わせてご提案します。"));
+    }
+  }
+
+  // 手順の短いリスト（PRICE & FLOW の「ご利用の流れ」で使用。07 FLOW の renderSteps と違い、
+  // 見出し・intro・outro を持たない、他セクションの下に足すための軽量版）
+  function renderMiniFlow(container, steps) {
+    var list = el("div", "flow-list");
+    (steps || []).forEach(function (step) {
+      var item = el("div", "flow-step");
+      var head = el("div", "flow-step-head");
+      head.appendChild(el("span", "flow-step-num", step.num));
+      var titleWrap = el("span", "flow-step-title");
+      titleWrap.appendChild(el("b", "", step.title));
+      head.appendChild(titleWrap);
+      item.appendChild(head);
+      item.appendChild(el("p", "flow-step-text", step.text));
+      list.appendChild(item);
+    });
+    container.appendChild(list);
+  }
+
+  // PRICE & FLOW：料金（renderPricingと同じ構成）＋ 簡略化したご利用の流れ
+  function renderPriceFlow(container, c) {
+    renderPricing(container, c);
+    if (c.modalFlowSteps && c.modalFlowSteps.length) {
+      container.appendChild(el("h3", "modal-subhead", c.modalFlowHeading || "ご利用の流れ"));
+      renderMiniFlow(container, c.modalFlowSteps);
+    }
+  }
+
+  // 独立した案内枠（例：「👒 お子さま連れの方へ」）。modalType に関わらず、
+  // 本文の下に追加できる汎用パーツ。
+  function renderBox(container, box) {
+    var wrap = el("div", "modal-box");
+    wrap.appendChild(el("div", "modal-box-title", box.title));
+    wrap.appendChild(el("p", "modal-box-text", box.text));
+    if (box.note) wrap.appendChild(el("p", "modal-box-note", box.note));
+    container.appendChild(wrap);
+  }
+
+  // 写真投稿：文字を一切乗せず、写真だけを大きく見せるギャラリー
+  function renderGallery(container, c) {
+    (c.modalGallery || []).forEach(function (photo) {
+      var fig = el("div", "modal-gallery-item");
+      var img = document.createElement("img");
+      img.src = photo.src;
+      img.alt = photo.alt || c.en || "石垣島の写真";
+      img.loading = "lazy";
+      if (photo.fallback) {
+        img.setAttribute("onerror", "this.onerror=null;this.src='" + photo.fallback + "'");
+      }
+      fig.appendChild(img);
+      container.appendChild(fig);
+    });
+  }
+
+  // 本文の下に添える小さな補足リンク（例：ABOUTの「担当スタッフについて →」）
+  // 押すと折りたたみパネルが開く。詳細を知りたい人だけが開ける、控えめな導線。
+  function renderFootnote(container, note) {
+    var wrap = el("div", "modal-footnote");
+
+    var trigger = document.createElement("button");
+    trigger.type = "button";
+    trigger.className = "modal-footnote-trigger";
+    trigger.setAttribute("aria-expanded", "false");
+    trigger.appendChild(el("span", "", note.label));
+    var arrow = el("span", "arrow", "→");
+    trigger.appendChild(arrow);
+
+    var panel = el("div", "modal-footnote-panel");
+    panel.appendChild(el("p", "modal-footnote-body", note.body));
+
+    trigger.addEventListener("click", function () {
+      var isOpen = wrap.classList.toggle("is-open");
+      trigger.setAttribute("aria-expanded", isOpen ? "true" : "false");
+      panel.style.maxHeight = isOpen ? panel.scrollHeight + "px" : "0px";
+    });
+
+    wrap.appendChild(trigger);
+    wrap.appendChild(panel);
+    container.appendChild(wrap);
+  }
+
+  /* ------------------------------------------------------------
+     モーダルの開閉と、ブラウザの「戻る」との連携
+     ------------------------------------------------------------
+     相談ボタンから外部（Googleフォーム）へ移動したあと「戻る」で
+     このサイトに戻ってきたとき、開いていたカードのモーダルが
+     そのまま復元されるように、モーダルの開閉状態を URL の #ハッシュ
+     と履歴（history.pushState）に反映しています。
+  ------------------------------------------------------------ */
+  function showModal(id) {
+    var c = null;
+    for (var i = 0; i < CARDS.length; i++) { if (CARDS[i].id === id) { c = CARDS[i]; break; } }
+    if (!c) return;
+
+    mediaEl.style.aspectRatio = c.modalAspect || "";
+    if (c.modalImg) {
+      mediaEl.style.display = "";
+      var fallbackAttr = c.modalFallback
+        ? ' onerror="this.onerror=null;this.src=\'' + c.modalFallback + '\'"'
+        : "";
+      mediaEl.innerHTML = '<img src="' + c.modalImg + '" alt="' + c.en + '"' + fallbackAttr + '>';
+    } else {
+      mediaEl.style.display = "none";
+      mediaEl.innerHTML = "";
+    }
+    if (c.modalType === "gallery") {
+      // 写真投稿：番号やタイトルの文字は乗せず、写真だけを見せる
+      numEl.hidden = true;
+      numEl.textContent = "";
+      headingEl.hidden = true;
+      headingEl.textContent = "";
+    } else {
+      numEl.hidden = false;
+      numEl.textContent = c.num + " / " + c.jp;
+      headingEl.hidden = false;
+      headingEl.textContent = c.modalHeading;
+    }
+    if (c.modalName) {
+      nameEl.hidden = false;
+      nameEl.textContent = c.modalName;
+    } else {
+      nameEl.hidden = true;
+      nameEl.textContent = "";
+    }
+
+    contentEl.innerHTML = "";
+    if (c.modalType === "steps") renderSteps(contentEl, c);
+    else if (c.modalType === "pricing") renderPricing(contentEl, c);
+    else if (c.modalType === "faq") renderFaq(contentEl, c);
+    else if (c.modalType === "policy") renderPolicy(contentEl, c);
+    else if (c.modalType === "scenarios") renderScenarios(contentEl, c);
+    else if (c.modalType === "priceFlow") renderPriceFlow(contentEl, c);
+    else if (c.modalType === "gallery") renderGallery(contentEl, c);
+    else renderParagraphs(contentEl, c.modalText);
+
+    if (c.modalBox) renderBox(contentEl, c.modalBox);
+    if (c.modalFootnote) renderFootnote(contentEl, c.modalFootnote);
+
+    ctaEl.textContent = "";
+    ctaEl.innerHTML = (c.ctaLabel || "相談してみる") + " <span>→</span>";
+
+    overlay.classList.add("is-open");
+    document.body.classList.add("modal-open");
+  }
+  function hideModal() {
+    overlay.classList.remove("is-open");
+    document.body.classList.remove("modal-open");
+  }
+
+  // ユーザー操作でモーダルを開く：履歴に1件積んで、URLに #カードID を反映
+  function openModal(id) {
+    showModal(id);
+    if (location.hash !== "#" + id) {
+      history.pushState({ modalId: id }, "", "#" + id);
+    }
+  }
+  // ユーザー操作でモーダルを閉じる：#ハッシュが付いていた分だけ履歴を戻す
+  function closeModal() {
+    hideModal();
+    if (location.hash) {
+      history.back();
+    }
+  }
+
+  // ブラウザの「戻る／進む」操作（外部サイトから戻ってきた場合も含む）に追従
+  window.addEventListener("popstate", function () {
+    var id = location.hash ? location.hash.slice(1) : "";
+    var exists = CARDS.some(function (c) { return c.id === id; });
+    if (exists) {
+      showModal(id);
+    } else {
+      hideModal();
+    }
+  });
+
+  // ページ読み込み時点で #カードID が付いている場合（外部から戻ってきた直後など）は
+  // そのカードのモーダルを最初から開いた状態にする
+  (function openFromInitialHash() {
+    var id = location.hash ? location.hash.slice(1) : "";
+    if (CARDS.some(function (c) { return c.id === id; })) {
+      showModal(id);
+    }
+  })();
+
+  document.getElementById("modalClose").addEventListener("click", closeModal);
+  document.getElementById("modalBack").addEventListener("click", closeModal);
+  overlay.addEventListener("click", function (e) { if (e.target === overlay) closeModal(); });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape" && overlay.classList.contains("is-open")) closeModal(); });
+
+  document.querySelectorAll("[data-open]").forEach(function (btn) {
+    btn.addEventListener("click", function () { openModal(btn.getAttribute("data-open")); });
+  });
+
+  /* ------------------------------------------------------------
+     profile tabs（Grid / Reels / Tagged）
+     実際のコンテンツがあるのは Grid のみのため、他タブは
+     準備中の案内を表示します（存在しないコンテンツを装いません）。
+  ------------------------------------------------------------ */
+  var tabPlaceholderMessages = {
+    reels: "🎬　動画コンテンツは準備中です。",
+    tagged: "🏷️　こちらは準備中です。"
+  };
+  var tabPlaceholder = document.getElementById("tabPlaceholder");
+  var tabPlaceholderText = document.getElementById("tabPlaceholderText");
+  document.querySelectorAll(".ptab").forEach(function (tab) {
+    tab.addEventListener("click", function () {
+      document.querySelectorAll(".ptab").forEach(function (t) {
+        t.classList.remove("is-active");
+        t.removeAttribute("aria-current");
+      });
+      tab.classList.add("is-active");
+      tab.setAttribute("aria-current", "true");
+
+      var key = tab.getAttribute("data-tab");
+      if (key === "grid") {
+        grid.hidden = false;
+        tabPlaceholder.hidden = true;
+      } else {
+        grid.hidden = true;
+        tabPlaceholderText.textContent = tabPlaceholderMessages[key] || "";
+        tabPlaceholder.hidden = false;
+      }
+    });
+  });
+
+  /* “∨” ボタン：ページのリンクをコピー */
+  var moreBtn = document.getElementById("moreBtn");
+  if (moreBtn) {
+    moreBtn.addEventListener("click", function () {
+      var url = window.location.href;
+      var done = function () {
+        var original = moreBtn.innerHTML;
+        moreBtn.innerHTML = "✓";
+        setTimeout(function () { moreBtn.innerHTML = original; }, 1400);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url).then(done).catch(done);
+      } else {
+        done();
+      }
+    });
+  }
+})();
+</script>
+
+</body>
+</html>
