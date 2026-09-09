@@ -29,10 +29,14 @@
        07〜12          … 写真投稿（旧 03/07/08/09/10/12 の表紙写真を再配置）
 
      カードの中身（modalType）：
-       未指定       … 通常の本文（modalText、\n\n で段落分け）
+       未指定       … 通常の本文（modalText、\n\n で段落分け。または modalParagraphs[{text,cls}] +
+                      modalClosing[String] で強弱つきのストーリー本文にできます。01 で使用）
                       modalBox: { title, text, note } で本文の下に独立した案内枠を追加可（01 で使用）
                       modalFootnote: { label, body } で「label →」の補足リンクを追加可（03 で使用）
-       "scenarios"  … 短いシナリオ一覧（modalIntro + modalScenarios[{title,text}]。02 で使用）
+       "scenarios"  … 短いシナリオ一覧（modalIntro + modalScenarios[{title,text}]。現在は未使用）
+       "dayStyles"  … FAMILY/SLOW/LOCAL DAY等のタブ切り替え（modalIntro + modalDays[{id,en,jp,steps[],
+                      note,caution}] + modalHours[{num,title,text}] + modalParagraphs/modalClosing で
+                      締めのメッセージ。02 で使用）
        "priceFlow"  … 料金（"pricing" と同じ構成）＋ 簡略化した利用の流れ
                       （modalFlowSteps[{num,title,text}] / modalFlowHeading。04 で使用）
        "faq"        … Q&A アコーディオン（modalFaq 配列。05 で使用）
@@ -243,17 +247,31 @@ a { color: inherit; }
 .profile-bio-line + .profile-bio-line { margin-top: 0.16em; }
 .profile-bio-line--lead {
   font-weight: 800;
-  font-size: clamp(1.12rem, 5vw, 1.34rem);
-  letter-spacing: 0.005em;
+  font-size: clamp(0.76rem, 4.25vw, 1.34rem);
+  letter-spacing: 0em;
   margin-bottom: 0.28em;
+  white-space: nowrap;
 }
 .bio-indent { display: block; margin-top: 0.1em; }
 .profile-bio-emphasis {
+  margin: 0 0 0.58em;
+}
+.profile-bio-emphasis-line {
+  display: block;
+  color: #FFFFFF;
+}
+.profile-bio-emphasis-line--sub {
+  font-weight: 600;
+  font-size: clamp(0.74rem, 3.1vw, 0.86rem);
+  line-height: 1.5;
+  letter-spacing: 0.01em;
+  opacity: 0.86;
+  margin-bottom: 0.12em;
+}
+.profile-bio-emphasis-line--main {
   font-weight: 700;
   font-size: clamp(0.98rem, 4vw, 1.14rem);
   line-height: 1.5;
-  color: #FFFFFF;
-  margin: 0 0 0.6em;
 }
 .profile-bio-body {
   font-weight: 500;
@@ -624,6 +642,46 @@ body.modal-open { overflow: hidden; }
   color: var(--c-dusty-deep);
 }
 
+/* ---- PRIVATE: 複数段落のストーリー本文（強弱つき） ---- */
+.modal-story { margin: 0; }
+.modal-story p {
+  margin: 0 0 1.3rem;
+  font-size: 0.94rem;
+  line-height: 1.9;
+  color: var(--c-ink-soft);
+  white-space: pre-line;
+}
+.modal-story p:last-child { margin-bottom: 0; }
+.modal-story p.is-lede {
+  font-weight: 700;
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--c-ink);
+  margin-bottom: 1.6rem;
+}
+.modal-story p.is-emphasis {
+  font-weight: 700;
+  font-size: 0.98rem;
+  line-height: 1.85;
+  color: var(--c-ink);
+  margin: 1.8rem 0;
+}
+.modal-story-closing {
+  margin-top: 2.1rem;
+  padding-top: 1.7rem;
+  border-top: 1px solid var(--c-ink-faint);
+}
+.modal-story-closing p {
+  margin: 0 0 0.45em;
+  font-family: var(--f-display);
+  font-weight: 600;
+  font-size: 1.18rem;
+  line-height: 1.6;
+  color: var(--c-ink);
+  white-space: pre-line;
+}
+.modal-story-closing p:last-child { margin-bottom: 0; }
+
 /* ---- FLOW（ご利用の流れ） ---- */
 .flow-list { margin-top: 0.4rem; }
 .flow-step {
@@ -904,6 +962,104 @@ body.modal-open { overflow: hidden; }
   white-space: pre-line;
 }
 
+/* ---- YOUR DAY: FAMILY / SLOW / LOCAL DAY 切り替えタブ ---- */
+.day-tabs {
+  display: flex;
+  gap: 0.4rem;
+  margin: 1.5rem 0 0;
+}
+.day-tab {
+  flex: 1;
+  padding: 0.6em 0.3em;
+  border-radius: 999px;
+  border: 1px solid var(--c-ink-faint);
+  background: transparent;
+  font-family: var(--f-ui);
+  font-weight: 700;
+  font-size: 0.66rem;
+  letter-spacing: 0.03em;
+  color: var(--c-ink-soft);
+  cursor: pointer;
+  text-align: center;
+  white-space: nowrap;
+  transition: background 0.3s var(--ease), color 0.3s var(--ease), border-color 0.3s var(--ease);
+}
+.day-tab.is-active { background: var(--c-ink); border-color: var(--c-ink); color: var(--c-bg); }
+.day-panels { margin-top: 1.4rem; }
+.day-panel { display: none; }
+.day-panel.is-active { display: block; }
+.day-jp {
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: 1.15rem;
+  color: var(--c-ink);
+  margin: 0 0 1.2rem;
+}
+.day-flow { margin: 0 0 1.5rem; }
+.day-flow-step {
+  margin: 0;
+  padding: 0.2rem 0;
+  font-size: 0.88rem;
+  line-height: 1.65;
+  color: var(--c-ink-soft);
+  text-align: center;
+  white-space: pre-line;
+}
+.day-flow-arrow {
+  text-align: center;
+  color: var(--c-dusty-deep);
+  opacity: 0.55;
+  font-size: 0.82rem;
+  line-height: 1;
+  margin: 0.1rem 0;
+}
+.day-note {
+  margin: 0;
+  font-size: 0.86rem;
+  line-height: 1.85;
+  color: var(--c-ink-soft);
+  white-space: pre-line;
+}
+.day-caution {
+  margin: 1.1rem 0 0;
+  font-size: 0.74rem;
+  line-height: 1.75;
+  color: var(--c-ink-soft);
+  opacity: 0.82;
+  white-space: pre-line;
+}
+
+/* ---- YOUR DAY: 時間による過ごし方の幅（料金ではない軽い案内） ---- */
+.hours-list { margin-top: 0.8rem; display: flex; flex-direction: column; gap: 0.9rem; }
+.hours-item {
+  padding: 0.95rem 1.1rem;
+  border: 1px solid var(--c-ink-faint);
+  border-radius: 12px;
+  background: rgba(253,252,248,0.5);
+}
+.hours-num {
+  font-family: var(--f-ui);
+  font-weight: 700;
+  font-size: 0.64rem;
+  letter-spacing: 0.08em;
+  color: var(--c-dusty-deep);
+  margin: 0 0 0.4em;
+}
+.hours-title {
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: 0.98rem;
+  color: var(--c-ink);
+  margin: 0 0 0.3em;
+}
+.hours-text {
+  margin: 0;
+  font-size: 0.82rem;
+  line-height: 1.7;
+  color: var(--c-ink-soft);
+  white-space: pre-line;
+}
+
 /* ---- 写真投稿：複数写真のギャラリー ---- */
 .modal-gallery-item { margin: 0 0 0.7rem; border-radius: 12px; overflow: hidden; background: var(--c-card); }
 .modal-gallery-item img { width: 100%; display: block; }
@@ -923,6 +1079,18 @@ body.modal-open { overflow: hidden; }
   .tile-content { padding: 4cqw 6cqw 7cqw; }
   .cream-portrait { display: none; }
   .profile-actions { gap: 0.4rem; }
+  .profile-bio-line--lead { margin-bottom: 0.2em; letter-spacing: -0.01em; }
+  .profile-bio-emphasis { margin-bottom: 0.48em; }
+  .profile-bio-body { margin-bottom: 0.58em; line-height: 1.58; }
+  .profile-bio-line + .profile-bio-line { margin-top: 0.1em; }
+  .modal-story p { margin-bottom: 1.1rem; }
+  .modal-story p.is-emphasis { margin: 1.5rem 0; }
+  .modal-story-closing { margin-top: 1.8rem; padding-top: 1.4rem; }
+  .modal-story-closing p { font-size: 1.05rem; }
+  .day-tab { font-size: 0.6rem; padding: 0.55em 0.2em; }
+  .day-jp { font-size: 1.05rem; margin-bottom: 1rem; }
+  .day-flow-step { font-size: 0.85rem; }
+  .hours-item { padding: 0.85rem 0.95rem; }
 }
 @media (min-width: 1024px) {
   .page { max-width: 760px; padding-top: clamp(3rem, 6vw, 4.5rem); }
@@ -953,8 +1121,8 @@ body.modal-open { overflow: hidden; }
     <p class="profile-name" id="profileName">ISHIGAKI PRIVATE</p>
     <p class="profile-category">Private Guide &amp; Local Attendant</p>
     <p class="profile-bio-line profile-bio-line--lead">📍 1日1組｜完全プライベートガイド＆アテンド</p>
-    <p class="profile-bio-emphasis">大切な人との時間を、心ゆくまで🌿</p>
-    <p class="profile-bio-body">旅先で何をするか、どこへ行くか。<br>調べたり、迷ったり、段取りを考えたり。<br>そんな時間も、家族や恋人と楽しむ時間に変えられたら。</p>
+    <p class="profile-bio-emphasis"><span class="profile-bio-emphasis-line profile-bio-emphasis-line--sub">1日1日、1秒1秒を大切に。</span><span class="profile-bio-emphasis-line profile-bio-emphasis-line--main">大切な人との時間を、心ゆくまで🌿</span></p>
+    <p class="profile-bio-body">旅先で何をするか、どこへ行くか。<br>調べたり、迷ったり、段取りを考えたり。<br>そんな時間も、大切な人と楽しむ時間に変えられたら。</p>
     <p class="profile-bio-body">ご家族で思いきり遊ぶ一日も、<br>ご夫婦や恋人とゆっくり過ごすひとときも。<br>周りに気を遣わず、自分たちのペースで。</p>
     <p class="profile-bio-line">🏝️ <span>あなたの「こう過ごしたい」を伺い、<br>石垣島での一日をオーダーメイドします。</span></p>
     <p class="profile-bio-line">🔒 <span>元芸能マネジメント・社長秘書の経験を活かし、<br>事前の段取りから、当日の気配りまで。<br>プライバシーを大切に、心地よい距離感で寄り添います。</span></p>
@@ -1042,23 +1210,76 @@ body.modal-open { overflow: hidden; }
       img: "images/card-private.jpg", fallback: "https://commons.wikimedia.org/wiki/Special:FilePath/Nishibama_beach_Okinawa_Aka_Island.jpg?width=900",
       modalImg: "images/card-private-modal.jpg", modalFallback: "https://commons.wikimedia.org/wiki/Special:FilePath/Nishibama_beach_Okinawa_Aka_Island.jpg?width=1200",
       modalHeading: "ONE DAY. ONE GROUP.",
-      modalText: "大切な人との時間を、心ゆくまで。\n\n旅先での調べものや段取りに追われず、目の前の景色や、一緒にいる人との時間を楽しんでいただけるように。\n\n1日1組の完全プライベートで、あなたの「こう過ごしたい」に合わせて、石垣島での一日をご提案します。\n\n家族で思いきり遊びたい。\n恋人と静かな場所で過ごしたい。\n予定を詰め込まず、ゆっくりしたい。\n\nご希望を事前に伺い、当日も天候や体調、お客様のペースに合わせて柔軟に寄り添います。\n\n旅の思い出を写真や動画で残したい時も、できる範囲でお手伝いします。",
-      modalBox: { title: "👒 お子さま連れの方へ", text: "お子さまの年齢やペースに合わせて、ご家族みんなが楽しめる過ごし方をご提案します。\n\nお預かりが必要な場合は、外部のベビーシッターサービスの利用についてご相談ください。", note: "※ガイドによる託児は行っておりません。シッターの利用は別料金・事前確認制となり、空き状況によってはご希望に添えない場合があります。" }
+      modalParagraphs: [
+        { text: "1日1日、1秒1秒を大切に。", cls: "lede" },
+        { text: "毎日、仕事や家のこと、予定や段取り。\n気づけば、いつも何かを考えている。" },
+        { text: "せっかく石垣島まで来てくれた時間くらい、" },
+        { text: "「次はどこへ行く？」\n「何時に出ればいい？」\n「今日はどう過ごそう？」" },
+        { text: "そんなことを考える時間からも、\n少し離れてほしいと思っています。" },
+        { text: "ここでの時間は、楽しむこと。緩むこと。\n大切な人との時間を味わうことに使ってほしい。", cls: "emphasis" },
+        { text: "だから、行き先を考えることも、当日の流れも、\n予定が変わったときのことも、\nできることは私に任せてください。" },
+        { text: "事前にご希望を伺って一日を考えますが、\nその通りに過ごすことが目的ではありません。" },
+        { text: "疲れたら休む。\n気に入った場所があれば長くいる。\n急にやりたいことができたら予定を変える。\n何もしない時間が欲しくなったら、それもいい。" },
+        { text: "予定に人を合わせるのではなく、\nその日のあなたに、予定を合わせる。", cls: "emphasis" },
+        { text: "一日一組だからこそ、\nそのときの気分や体調、天気や状況を見ながら、\n心地よい距離感で柔軟に寄り添います。" }
+      ],
+      modalClosing: ["石垣島にいる間くらい、\n“考えること”を少し手放して。", "あとは、楽しむだけ。"],
+      modalBox: { title: "👒 お子さま連れの方へ", text: "お子さまの年齢や人数、その日の過ごし方に合わせて、\nご家族みんなが楽しめるよう、同行中のサポートも柔軟に対応します。\n\nお子さま1名の場合は、\n内容に応じて私自身がサポートします。\n\n複数のお子さまがいる場合や、\nより手厚いサポートが必要な場合は、\nご希望に応じて外部のシッター等のサポートスタッフを追加し、\n一緒に同行することも可能です。\n\nお子さまを別の場所でお預かりするのではなく、\n基本的にはご家族の旅に一緒に同行しながら\nサポートする形となります。\n\n外部スタッフを追加する場合の料金は\n別途お見積もりとなります。\n\nまた、同行に必要な飲食代・施設利用料・\nアクティビティ参加費などが発生する場合は、\nスタッフ分も実費をご負担いただきます。", note: "※サポート内容や必要なスタッフ人数は、\nお子さまの年齢・人数・ご希望の過ごし方を伺ったうえで\nご相談させていただきます。" }
     },
     {
       id: "yourday", num: "02", en: "YOUR DAY", jp: "こんな島時間を過ごせます", tone: "sage",
       template: "photo",
       img: "images/card-experience.jpg", fallback: "https://commons.wikimedia.org/wiki/Special:FilePath/Underwater_yaeyama_okinawa_Japan.jpg?width=900",
       modalImg: "images/card-experience-modal.jpg", modalFallback: "https://commons.wikimedia.org/wiki/Special:FilePath/Underwater_yaeyama_okinawa_Japan.jpg?width=1200",
-      modalType: "scenarios",
+      modalType: "dayStyles",
       modalHeading: "MADE FOR YOU.",
-      modalIntro: "どこへ行くかだけでなく、どんな時間を過ごしたいか。\nあなたの希望から、一日を一緒に考えます。",
-      modalScenarios: [
-        { title: "家族で夢中になる時間", text: "お子さまのペースで海や自然に触れ、大人も一緒に楽しむ一日。" },
-        { title: "島の人と出会う時間", text: "地元の人との会話や交流を通して、島の暮らしに触れるひととき。" },
-        { title: "静かな景色を楽しむ時間", text: "海を眺めたり、夕日を待ったり。予定を詰め込まず、ゆっくり過ごす時間。" },
-        { title: "島の食を楽しむ時間", text: "好みやその日の過ごし方に合わせて、島ならではの食を楽しむひととき。" }
-      ]
+      modalIntro: "同じ石垣島でも、\n過ごしたい時間は人それぞれ。\n\n海で思いきり遊びたい日も。\n何もしないで、ゆっくりしたい日も。\n島の人や文化に触れてみたい日も。\n\n決まったコースではなく、\nあなたの「こんな時間を過ごしたい」から\n一日の過ごし方を考えます。",
+      modalDays: [
+        {
+          id: "family", en: "FAMILY DAY", jp: "家族で、思いきり遊ぶ。",
+          steps: [
+            "その日に気持ちいい海へ",
+            "泳いだり、シュノーケルをしたり、砂浜で遊んだり",
+            "みんなで島ごはん",
+            "マングローブや自然の中で遊ぶ",
+            "アイスを食べたり、気になった場所へ寄り道"
+          ],
+          note: "子どもが夢中になった場所では、\n予定より長く遊んでもいい。\n\n「次に行かなきゃ」ではなく、\nその日の家族のペースを大切にします。"
+        },
+        {
+          id: "slow", en: "SLOW DAY", jp: "何もしない時間まで、楽しむ。",
+          steps: [
+            "人の少ない海や静かな景色へ",
+            "海を眺めたり、ゆっくり散歩したり",
+            "時間を気にせず島ランチ",
+            "気になるカフェやローカルなお店へ",
+            "その日の空や夕方の景色を楽しむ"
+          ],
+          note: "予定をたくさん入れなくても大丈夫。\n\n「今日はゆっくりしたい」\nそんな一日も、石垣島だからこそできる\n大切な旅の時間だと考えています。"
+        },
+        {
+          id: "local", en: "LOCAL DAY", jp: "島の日常や文化に触れる。",
+          steps: [
+            "集落を歩いて、島の日常を感じる",
+            "ローカルなお店や島の食を楽しむ",
+            "島の人との会話や出会い",
+            "三線・踊り・ものづくりなど、\nタイミングが合えば島の文化に触れる",
+            "気になった場所へ、予定にない寄り道"
+          ],
+          note: "有名な観光地を巡るだけではなく、\n暮らしているからこそ見える\n石垣島の空気や日常にも触れてもらえたらと思っています。",
+          caution: "※人との交流・文化体験・地域行事などは、\n季節やタイミング、受け入れ状況によって\nご案内できる内容が異なります。"
+        }
+      ],
+      modalHours: [
+        { num: "4 HOURS", title: "やりたいことを、ぎゅっと。", text: "限られた時間で、ひとつのテーマやエリアを中心に。" },
+        { num: "7 HOURS", title: "遊ぶ時間も、ゆっくりする時間も。", text: "石垣島での一日を余白を持って楽しみたい方に。" },
+        { num: "9 HOURS", title: "時間帯まで自由に、たっぷりと。", text: "朝からでも、昼から夜まででも、\n過ごしたい時間に合わせて一日を組み立てます。" }
+      ],
+      modalParagraphs: [
+        { text: "これは、ほんの一例です。" },
+        { text: "海だけで一日過ごしてもいい。\nおいしいものを巡る一日でもいい。\n島の人に会いに行く一日でもいい。\n予定を詰め込まず、何もしない時間があってもいい。" }
+      ],
+      modalClosing: ["「どこへ行くか」より、\n「どんな時間を過ごしたいか」。", "そこから、\nあなたの石垣島を一緒に考えます。"]
     },
     {
       id: "about", num: "03", en: "ABOUT", jp: "私が案内する石垣島", tone: "sand",
@@ -1094,16 +1315,19 @@ body.modal-open { overflow: hidden; }
         "ご希望に合わせたプランニング",
         "おすすめの場所や体験などのご提案",
         "可能な範囲での予約サポート",
-        "完全プライベートでのガイド＆アテンド",
+        "完全プライベートのガイド＆アテンド",
         "当日の天候や混雑、気分に合わせた柔軟な変更",
-        "子連れ旅などのちょっとしたサポート",
         "必要に応じた写真・動画撮影のお手伝い",
       ],
+      modalIncludesNote: {
+        title: "追加サポートについて",
+        text: "お子さまへの個別の付き添いなど、\n通常のガイド・アテンドを超えるサポートをご希望の場合は、\n内容に応じて追加料金にて対応します。\n\nお子さまの人数や年齢、必要なサポート内容によっては、\n外部のシッター等のサポートスタッフが\n一緒に同行することも可能です。\n\nその場合のスタッフ料金、および同行に必要な飲食代・施設利用料・\nアクティビティ参加費などは別途となります。",
+        note: "具体的な内容と料金は、\n事前のヒアリング後にお見積もりします。"
+      },
       modalFinePrint: [
         "※表示料金は目安料金です。\nご希望の内容・人数・必要なサポートによって料金は異なります。\n事前のヒアリング後、正式なお見積もりをご案内します。",
         "※施設利用料・アクティビティ体験料・飲食代・\nタクシー・駐車場代などの実費は別途となります。",
         "※ガイドのアクティビティ参加や食事同行をご希望の場合、\nガイド分の参加費・飲食代などの実費もお客様負担となります。",
-        "※外部ベビーシッターの利用をご希望の場合は、対応の可否を確認し、別途料金をご案内します。",
       ],
       modalExtension: { label: "延長", text: "当日のスケジュールに余裕がある場合のみ、\n1時間 ¥15,000で延長可能です。" },
       modalFlowHeading: "ご利用の流れ",
@@ -1302,6 +1526,21 @@ body.modal-open { overflow: hidden; }
     container.appendChild(el("p", "modal-text", text));
   }
 
+  function renderStory(container, c) {
+    var wrap = el("div", "modal-story");
+    (c.modalParagraphs || []).forEach(function (p) {
+      wrap.appendChild(el("p", p.cls ? "is-" + p.cls : "", p.text));
+    });
+    container.appendChild(wrap);
+    if (c.modalClosing) {
+      var closing = el("div", "modal-story-closing");
+      c.modalClosing.forEach(function (line) {
+        closing.appendChild(el("p", "", line));
+      });
+      container.appendChild(closing);
+    }
+  }
+
   function renderSteps(container, c) {
     renderParagraphs(container, c.modalIntro);
     var list = el("div", "flow-list");
@@ -1343,6 +1582,7 @@ body.modal-open { overflow: hidden; }
       c.modalIncludes.forEach(function (item) { ul.appendChild(el("li", "", item)); });
       container.appendChild(ul);
     }
+    if (c.modalIncludesNote) renderBox(container, c.modalIncludesNote);
     if (c.modalFinePrint && c.modalFinePrint.length) {
       var fine = el("div", "price-fineprint");
       c.modalFinePrint.forEach(function (note) { fine.appendChild(el("p", "", note)); });
@@ -1423,6 +1663,59 @@ body.modal-open { overflow: hidden; }
       container.appendChild(ex);
       container.appendChild(el("p", "modal-subcopy", "過ごし方の一例です。ご希望や天候などに合わせてご提案します。"));
     }
+  }
+
+  // YOUR DAY: FAMILY / SLOW / LOCAL DAY をタブで切り替え表示 ＋ 時間ごとの過ごし方の幅 ＋ 締めのメッセージ
+  function renderDayStyles(container, c) {
+    renderParagraphs(container, c.modalIntro);
+
+    if (c.modalDays && c.modalDays.length) {
+      var tabs = el("div", "day-tabs");
+      var panels = el("div", "day-panels");
+      c.modalDays.forEach(function (d, i) {
+        var tab = el("button", "day-tab" + (i === 0 ? " is-active" : ""), d.en);
+        tab.type = "button";
+        tab.dataset.day = d.id;
+        tabs.appendChild(tab);
+
+        var panel = el("div", "day-panel" + (i === 0 ? " is-active" : ""));
+        panel.dataset.day = d.id;
+        panel.appendChild(el("p", "day-jp", d.jp));
+        var flow = el("div", "day-flow");
+        (d.steps || []).forEach(function (step, si) {
+          flow.appendChild(el("p", "day-flow-step", step));
+          if (si < d.steps.length - 1) flow.appendChild(el("div", "day-flow-arrow", "↓"));
+        });
+        panel.appendChild(flow);
+        if (d.note) panel.appendChild(el("p", "day-note", d.note));
+        if (d.caution) panel.appendChild(el("p", "day-caution", d.caution));
+        panels.appendChild(panel);
+      });
+      tabs.addEventListener("click", function (e) {
+        var btn = e.target.closest(".day-tab");
+        if (!btn) return;
+        var id = btn.dataset.day;
+        tabs.querySelectorAll(".day-tab").forEach(function (t) { t.classList.toggle("is-active", t.dataset.day === id); });
+        panels.querySelectorAll(".day-panel").forEach(function (p) { p.classList.toggle("is-active", p.dataset.day === id); });
+      });
+      container.appendChild(tabs);
+      container.appendChild(panels);
+    }
+
+    if (c.modalHours && c.modalHours.length) {
+      container.appendChild(el("h3", "modal-subhead", "時間によって過ごし方も変わります"));
+      var hoursList = el("div", "hours-list");
+      c.modalHours.forEach(function (h) {
+        var item = el("div", "hours-item");
+        item.appendChild(el("p", "hours-num", h.num));
+        item.appendChild(el("p", "hours-title", h.title));
+        item.appendChild(el("p", "hours-text", h.text));
+        hoursList.appendChild(item);
+      });
+      container.appendChild(hoursList);
+    }
+
+    if (c.modalParagraphs || c.modalClosing) renderStory(container, c);
   }
 
   // 手順の短いリスト（PRICE & FLOW の「ご利用の流れ」で使用。07 FLOW の renderSteps と違い、
@@ -1555,8 +1848,10 @@ body.modal-open { overflow: hidden; }
     else if (c.modalType === "faq") renderFaq(contentEl, c);
     else if (c.modalType === "policy") renderPolicy(contentEl, c);
     else if (c.modalType === "scenarios") renderScenarios(contentEl, c);
+    else if (c.modalType === "dayStyles") renderDayStyles(contentEl, c);
     else if (c.modalType === "priceFlow") renderPriceFlow(contentEl, c);
     else if (c.modalType === "gallery") renderGallery(contentEl, c);
+    else if (c.modalParagraphs) renderStory(contentEl, c);
     else renderParagraphs(contentEl, c.modalText);
 
     if (c.modalBox) renderBox(contentEl, c.modalBox);
